@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-labelledby="iconPhotoStartTitle">
+  <title id="iconPhotoStartTitle">한 장의 폴라로이드 사진에 담긴 아이의 웃는 얼굴을 보여주는 삽화</title>
+  <circle cx="150" cy="150" r="150" fill="#FFE3DB"/>
+  <g transform="rotate(-8 150 150)">
+    <rect x="90" y="78" width="120" height="144" rx="10" fill="#FFFFFF" stroke="#E8785F" stroke-width="3"/>
+    <rect x="102" y="90" width="96" height="90" rx="6" fill="#A8DAD0"/>
+    <circle cx="150" cy="128" r="20" fill="#FBD9B6"/>
+    <path d="M126 120 Q126 100 150 100 Q174 100 174 120 Q174 110 150 110 Q126 110 126 120 Z" fill="#5C4433"/>
+    <circle cx="141" cy="128" r="2.6" fill="#453D38"/>
+    <circle cx="159" cy="128" r="2.6" fill="#453D38"/>
+    <path d="M140 136 Q150 143 160 136" stroke="#453D38" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <line x1="118" y1="198" x2="182" y2="198" stroke="#F4C7B8" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <g fill="#FFE5A0">
+    <path d="M222 96 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5 Z"/>
+  </g>
+  <g fill="#FFE5A0" opacity="0.85">
+    <path d="M78 208 l3.5 8.5 8.5 3.5 -8.5 3.5 -3.5 8.5 -3.5 -8.5 -8.5 -3.5 8.5 -3.5 Z"/>
+  </g>
+</svg>

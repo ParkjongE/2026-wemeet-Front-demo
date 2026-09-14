@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-labelledby="iconCalendarGrowthTitle">
+  <title id="iconCalendarGrowthTitle">달력의 날짜 위에 작은 새싹이 자라나는 모습을 보여주는 삽화</title>
+  <circle cx="150" cy="150" r="150" fill="#DCEFE8"/>
+  <rect x="75" y="86" width="150" height="130" rx="14" fill="#FFFFFF" stroke="#8FC4B7" stroke-width="3"/>
+  <rect x="75" y="86" width="150" height="34" rx="14" fill="#8FC4B7"/>
+  <rect x="75" y="106" width="150" height="14" fill="#8FC4B7"/>
+  <rect x="102" y="72" width="10" height="28" rx="5" fill="#5C4433"/>
+  <rect x="188" y="72" width="10" height="28" rx="5" fill="#5C4433"/>
+  <g stroke="#DCEFE8" stroke-width="3">
+    <line x1="75" y1="150" x2="225" y2="150"/>
+    <line x1="75" y1="183" x2="225" y2="183"/>
+    <line x1="125" y1="120" x2="125" y2="216"/>
+    <line x1="175" y1="120" x2="175" y2="216"/>
+  </g>
+  <rect x="130" y="155" width="40" height="28" rx="6" fill="#FFB4A2"/>
+  <g transform="translate(150 155)">
+    <line x1="0" y1="0" x2="0" y2="-22" stroke="#8FCB9B" stroke-width="4" stroke-linecap="round"/>
+    <path d="M0 -22 Q-12 -30 -4 -40 Q4 -30 0 -22" fill="#8FCB9B"/>
+    <path d="M0 -14 Q12 -20 8 -30 Q-2 -26 0 -14" fill="#A8DAD0"/>
+  </g>
+</svg>

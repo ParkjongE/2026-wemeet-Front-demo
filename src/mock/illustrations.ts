@@ -14,6 +14,8 @@ import diaryBook from "../assets/illustrations/diary-scene-book.svg";
 import diaryDrawing from "../assets/illustrations/diary-scene-drawing.svg";
 import diaryGarden from "../assets/illustrations/diary-scene-garden.svg";
 import diaryNap from "../assets/illustrations/diary-scene-nap.svg";
+import iconPhotoStart from "../assets/illustrations/icon-photo-start.svg";
+import iconCalendarGrowth from "../assets/illustrations/icon-calendar-growth.svg";
 
 export const hero = heroUrl;
 
@@ -34,3 +36,9 @@ export const genericDiaryScenes = [
   diaryGarden,
   diaryNap,
 ];
+
+export const pointIcons = {
+  photoStart: iconPhotoStart,
+  shortStory: diaryDrawing,
+  growthByDate: iconCalendarGrowth,
+};

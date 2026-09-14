@@ -6,7 +6,7 @@ import ExampleRecordCard from "../components/Intro/ExampleRecordCard";
 import CalendarGrid from "../components/Calendar/CalendarGrid";
 import StorybookViewer from "../components/StorybookViewer/StorybookViewer";
 import { useDiary } from "../context/useDiary";
-import { hero, mascot, genericDiaryScenes } from "../mock/illustrations";
+import { hero, mascot, genericDiaryScenes, pointIcons } from "../mock/illustrations";
 import { SAMPLE_STORYBOOK, LESSON_TAGS } from "../mock/storybook";
 
 export default function IntroPage() {
@@ -77,10 +77,20 @@ export default function IntroPage() {
           </div>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {["사진 한 장으로 시작", "짧은 일화 한 줄이면 충분", "날짜별로 모이는 성장의 순간"].map((point) => (
-              <div key={point} className="flex items-center gap-2 rounded-xl bg-mint-light px-4 py-3 text-sm text-brown">
-                <Check size={16} className="shrink-0 text-mint-deep" />
-                {point}
+            {[
+              { text: "사진 한 장으로 시작", image: pointIcons.photoStart },
+              { text: "짧은 일화 한 줄이면 충분", image: pointIcons.shortStory },
+              { text: "날짜별로 모이는 성장의 순간", image: pointIcons.growthByDate },
+            ].map((point) => (
+              <div
+                key={point.text}
+                className="flex flex-col items-center gap-3 rounded-2xl bg-mint-light px-4 py-5 text-center"
+              >
+                <img src={point.image} alt="" className="h-16 w-16 shrink-0" />
+                <div className="flex items-center gap-1.5 text-sm text-brown">
+                  <Check size={16} className="shrink-0 text-mint-deep" />
+                  {point.text}
+                </div>
               </div>
             ))}
           </div>
