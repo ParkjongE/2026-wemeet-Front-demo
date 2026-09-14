@@ -95,7 +95,17 @@ export default function IntroPage() {
             ))}
           </div>
 
-          <div className="mt-8">
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <ExampleRecordCard
+              imageSrc={genericDiaryScenes[0]}
+              dateLabel="8월 21일 · 실제 기록 예시"
+              text="무섭다며 망설이던 그네를 오늘은 혼자 힘으로 끝까지 올라갔어요."
+            />
+            <ExampleRecordCard
+              imageSrc={genericDiaryScenes[1]}
+              dateLabel="8월 27일 · 실제 기록 예시"
+              text="블록 탑이 와르르 무너졌는데도 울지 않고 다시 씩씩하게 쌓았어요."
+            />
             <ExampleRecordCard
               imageSrc={genericDiaryScenes[4]}
               dateLabel="9월 3일 · 실제 기록 예시"
