@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-labelledby="diaryNapTitle">
+  <title id="diaryNapTitle">낮잠을 자는 모습을 담은 그림책 스타일 삽화</title>
+  <circle cx="150" cy="150" r="150" fill="#F3EBD9"/>
+  <ellipse cx="150" cy="190" rx="80" ry="34" fill="#FFFFFF" stroke="#EAD9C4" stroke-width="3"/>
+  <circle cx="120" cy="176" r="26" fill="#FBD9B6"/>
+  <path d="M98 172 Q98 150 120 150 Q142 150 142 172 Q142 160 120 160 Q98 160 98 172 Z" fill="#5C4433"/>
+  <path d="M112 176 Q116 172 120 176" stroke="#453D38" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M120 176 Q124 172 128 176" stroke="#453D38" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <rect x="150" y="182" width="60" height="20" rx="10" fill="#A8DAD0"/>
+  <text x="175" y="130" font-family="sans-serif" font-size="20" fill="#A8DAD0">z</text>
+  <text x="190" y="108" font-family="sans-serif" font-size="26" fill="#A8DAD0">Z</text>
+</svg>

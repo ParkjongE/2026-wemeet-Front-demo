@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-labelledby="diaryParkTitle">
+  <title id="diaryParkTitle">그네를 타며 노는 모습을 담은 그림책 스타일 삽화</title>
+  <circle cx="150" cy="150" r="150" fill="#DCEFE8"/>
+  <line x1="90" y1="70" x2="90" y2="220" stroke="#8FC4B7" stroke-width="8" stroke-linecap="round"/>
+  <line x1="210" y1="70" x2="210" y2="220" stroke="#8FC4B7" stroke-width="8" stroke-linecap="round"/>
+  <line x1="90" y1="70" x2="210" y2="70" stroke="#8FC4B7" stroke-width="8" stroke-linecap="round"/>
+  <line x1="130" y1="75" x2="118" y2="190" stroke="#453D38" stroke-width="4"/>
+  <line x1="170" y1="75" x2="182" y2="190" stroke="#453D38" stroke-width="4"/>
+  <rect x="110" y="188" width="80" height="14" rx="7" fill="#FFB4A2"/>
+  <circle cx="150" cy="160" r="28" fill="#FBD9B6"/>
+  <path d="M126 152 Q126 130 150 130 Q174 130 174 152 Q174 140 150 140 Q126 140 126 152 Z" fill="#5C4433"/>
+  <circle cx="141" cy="158" r="3" fill="#453D38"/>
+  <circle cx="159" cy="158" r="3" fill="#453D38"/>
+  <path d="M142 168 Q150 174 158 168" stroke="#453D38" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <ellipse cx="230" cy="240" rx="60" ry="10" fill="#C7E6DC"/>
+</svg>

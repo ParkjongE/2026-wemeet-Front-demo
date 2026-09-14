@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" role="img" aria-labelledby="haruWriteTitle">
+  <title id="haruWriteTitle">연필로 기록하는 아기 캐릭터 하루</title>
+  <defs>
+    <linearGradient id="overallsWrite" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#B7E3D9"/>
+      <stop offset="100%" stop-color="#94CFC1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- legs, sitting cross -->
+  <ellipse cx="88" cy="208" rx="22" ry="11" fill="#FBD9B6"/>
+  <ellipse cx="116" cy="208" rx="22" ry="11" fill="#FBD9B6"/>
+
+  <!-- notepad on lap -->
+  <rect x="72" y="188" width="56" height="34" rx="6" fill="#FFFFFF" stroke="#E8785F" stroke-width="2.5"/>
+  <line x1="80" y1="198" x2="112" y2="198" stroke="#E3D9C6" stroke-width="2"/>
+  <line x1="80" y1="206" x2="104" y2="206" stroke="#E3D9C6" stroke-width="2"/>
+
+  <!-- cream top -->
+  <rect x="66" y="108" width="68" height="58" rx="24" fill="#FFF3DD"/>
+
+  <!-- resting arm -->
+  <rect x="122" y="146" width="18" height="44" rx="9" fill="#FBD9B6" transform="rotate(-10 131 146)"/>
+
+  <!-- writing arm bent down holding pencil -->
+  <rect x="52" y="140" width="18" height="50" rx="9" fill="#FBD9B6" transform="rotate(28 61 140)"/>
+  <g transform="rotate(48 78 186)">
+    <rect x="70" y="176" width="8" height="34" rx="3" fill="#FFE5A0" stroke="#C9A227" stroke-width="1.5"/>
+    <polygon points="70,176 78,176 74,168" fill="#C98F6B"/>
+  </g>
+
+  <!-- overalls -->
+  <path d="M70 136 L130 136 L133 190 Q100 200 67 190 Z" fill="url(#overallsWrite)"/>
+  <rect x="76" y="104" width="12" height="36" rx="5" fill="#94CFC1"/>
+  <rect x="112" y="104" width="12" height="36" rx="5" fill="#94CFC1"/>
+  <rect x="86" y="144" width="28" height="22" rx="6" fill="#FFB4A2"/>
+
+  <!-- head tilted down focused -->
+  <circle cx="100" cy="66" r="40" fill="#FBD9B6"/>
+
+  <!-- hair -->
+  <path d="M60 58 Q60 20 100 20 Q140 20 140 58 Q140 38 100 38 Q60 38 60 58 Z" fill="#5C4433"/>
+  <ellipse cx="93" cy="16" rx="6" ry="10" fill="#8FCB9B" transform="rotate(-18 93 16)"/>
+  <ellipse cx="106" cy="15" rx="6" ry="10" fill="#8FCB9B" transform="rotate(14 106 15)"/>
+
+  <!-- blush -->
+  <ellipse cx="76" cy="78" rx="8" ry="5" fill="#FFB4A2" opacity="0.7"/>
+  <ellipse cx="124" cy="78" rx="8" ry="5" fill="#FFB4A2" opacity="0.7"/>
+
+  <!-- eyes focused downward -->
+  <ellipse cx="86" cy="70" rx="4" ry="4.5" fill="#453D38"/>
+  <ellipse cx="114" cy="70" rx="4" ry="4.5" fill="#453D38"/>
+
+  <!-- small content smile -->
+  <path d="M92 82 Q100 87 108 82" stroke="#453D38" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

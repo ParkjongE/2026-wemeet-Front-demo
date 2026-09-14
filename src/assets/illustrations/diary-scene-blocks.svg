@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-labelledby="diaryBlocksTitle">
+  <title id="diaryBlocksTitle">알록달록 블록 쌓기 놀이를 담은 그림책 스타일 삽화</title>
+  <circle cx="150" cy="150" r="150" fill="#FFF3D6"/>
+  <rect x="100" y="190" width="46" height="40" rx="6" fill="#FFB4A2"/>
+  <rect x="150" y="190" width="46" height="40" rx="6" fill="#A8DAD0"/>
+  <rect x="125" y="148" width="46" height="40" rx="6" fill="#FFE5A0"/>
+  <circle cx="148" cy="120" r="10" fill="#8FCB9B"/>
+  <ellipse cx="150" cy="252" rx="70" ry="10" fill="#F3E3B8"/>
+</svg>

@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-labelledby="heroTitle heroDesc">
+  <title id="heroTitle">그림책 위에 앉은 아기 캐릭터 하루</title>
+  <desc id="heroDesc">민트색 멜빵옷을 입은 아기 하루가 커다랗게 펼쳐진 그림책 위에 앉아 있고, 책 속에는 작은 정원과 꽃, 별, 추억이 담긴 종이 조각들이 펼쳐져 있다.</desc>
+
+  <defs>
+    <radialGradient id="heroGlow" cx="50%" cy="38%" r="65%">
+      <stop offset="0%" stop-color="#FFF6DE"/>
+      <stop offset="60%" stop-color="#FFF9F0"/>
+      <stop offset="100%" stop-color="#FFF3E2"/>
+    </radialGradient>
+    <linearGradient id="pageLeft" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#F3EBD9"/>
+      <stop offset="100%" stop-color="#FFFDF6"/>
+    </linearGradient>
+    <linearGradient id="pageRight" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0%" stop-color="#F3EBD9"/>
+      <stop offset="100%" stop-color="#FFFDF6"/>
+    </linearGradient>
+    <linearGradient id="heroOveralls" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#B7E3D9"/>
+      <stop offset="100%" stop-color="#94CFC1"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#heroGlow)"/>
+
+  <!-- scattered stars -->
+  <g fill="#FFE5A0">
+    <path d="M120 90 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5 Z"/>
+    <path d="M660 70 l4 9 9 4 -9 4 -4 9 -4 -9 -9 -4 9 -4 Z"/>
+    <path d="M700 180 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 Z"/>
+    <path d="M90 220 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 Z"/>
+  </g>
+
+  <!-- open book -->
+  <g>
+    <ellipse cx="400" cy="520" rx="300" ry="26" fill="#EADFC8" opacity="0.5"/>
+    <path d="M400 240 C 250 260 120 290 70 340 L 70 470 C 160 420 280 400 400 420 Z" fill="url(#pageLeft)" stroke="#EAD9C4" stroke-width="2"/>
+    <path d="M400 240 C 550 260 680 290 730 340 L 730 470 C 640 420 520 400 400 420 Z" fill="url(#pageRight)" stroke="#EAD9C4" stroke-width="2"/>
+    <path d="M400 240 L400 420" stroke="#EAD9C4" stroke-width="3"/>
+  </g>
+
+  <!-- little garden on the left page -->
+  <g>
+    <ellipse cx="150" cy="400" rx="60" ry="14" fill="#DCEFE8"/>
+    <circle cx="120" cy="380" r="10" fill="#FFB4A2"/>
+    <circle cx="145" cy="372" r="8" fill="#FFE5A0"/>
+    <circle cx="168" cy="384" r="9" fill="#A8DAD0"/>
+    <path d="M120 390 v10 M145 380 v12 M168 393 v9" stroke="#8FCB9B" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- little garden on the right page -->
+  <g>
+    <ellipse cx="640" cy="400" rx="60" ry="14" fill="#DCEFE8"/>
+    <circle cx="612" cy="384" r="9" fill="#A8DAD0"/>
+    <circle cx="637" cy="374" r="8" fill="#FFB4A2"/>
+    <circle cx="662" cy="386" r="10" fill="#FFE5A0"/>
+    <path d="M612 393 v9 M637 382 v12 M662 396 v10" stroke="#8FCB9B" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- memory paper fragments tucked in the book -->
+  <g>
+    <rect x="230" y="330" width="70" height="56" rx="6" fill="#FFFFFF" stroke="#FFB4A2" stroke-width="3" transform="rotate(-8 265 358)"/>
+    <rect x="240" y="340" width="50" height="34" rx="3" fill="#FFE3DB" transform="rotate(-8 265 357)"/>
+    <rect x="500" y="335" width="66" height="52" rx="6" fill="#FFFFFF" stroke="#A8DAD0" stroke-width="3" transform="rotate(7 533 361)"/>
+    <rect x="509" y="345" width="48" height="32" rx="3" fill="#E3F4F0" transform="rotate(7 533 361)"/>
+  </g>
+
+  <!-- Haru sitting on the book spine, reading/happy -->
+  <g transform="translate(330 250)">
+    <ellipse cx="70" cy="168" rx="20" ry="11" fill="#FBD9B6"/>
+    <ellipse cx="20" cy="168" rx="20" ry="11" fill="#FBD9B6"/>
+
+    <rect x="16" y="72" width="70" height="60" rx="25" fill="#FFF3DD"/>
+
+    <rect x="2" y="108" width="20" height="46" rx="10" fill="#FBD9B6" transform="rotate(20 12 108)"/>
+    <rect x="82" y="108" width="20" height="46" rx="10" fill="#FBD9B6" transform="rotate(-20 92 108)"/>
+
+    <path d="M18 100 L86 100 L90 156 Q52 168 14 156 Z" fill="url(#heroOveralls)"/>
+    <rect x="26" y="68" width="12" height="34" rx="5" fill="#94CFC1"/>
+    <rect x="64" y="68" width="12" height="34" rx="5" fill="#94CFC1"/>
+    <rect x="36" y="106" width="28" height="22" rx="6" fill="#FFB4A2"/>
+
+    <circle cx="52" cy="34" r="40" fill="#FBD9B6"/>
+    <path d="M12 26 Q12 -12 52 -12 Q92 -12 92 26 Q92 6 52 6 Q12 6 12 26 Z" fill="#5C4433"/>
+    <ellipse cx="45" cy="-16" rx="6" ry="10" fill="#8FCB9B" transform="rotate(-18 45 -16)"/>
+    <ellipse cx="58" cy="-17" rx="6" ry="10" fill="#8FCB9B" transform="rotate(14 58 -17)"/>
+
+    <ellipse cx="28" cy="46" rx="8" ry="5" fill="#FFB4A2" opacity="0.75"/>
+    <ellipse cx="76" cy="46" rx="8" ry="5" fill="#FFB4A2" opacity="0.75"/>
+
+    <path d="M30 34 Q38 26 46 34" stroke="#453D38" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+    <path d="M58 34 Q66 26 74 34" stroke="#453D38" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+    <path d="M38 48 Q52 60 66 48" stroke="#453D38" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

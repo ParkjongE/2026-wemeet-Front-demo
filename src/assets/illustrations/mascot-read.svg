@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" role="img" aria-labelledby="haruReadTitle">
+  <title id="haruReadTitle">작은 그림책을 읽는 아기 캐릭터 하루</title>
+  <defs>
+    <linearGradient id="overallsRead" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#B7E3D9"/>
+      <stop offset="100%" stop-color="#94CFC1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- legs, sitting -->
+  <ellipse cx="88" cy="206" rx="20" ry="12" fill="#FBD9B6"/>
+  <ellipse cx="116" cy="206" rx="20" ry="12" fill="#FBD9B6"/>
+  <ellipse cx="86" cy="212" rx="14" ry="8" fill="#C98F6B"/>
+  <ellipse cx="118" cy="212" rx="14" ry="8" fill="#C98F6B"/>
+
+  <!-- cream top -->
+  <rect x="66" y="110" width="68" height="58" rx="24" fill="#FFF3DD"/>
+
+  <!-- arms holding book -->
+  <rect x="52" y="150" width="20" height="46" rx="10" fill="#FBD9B6" transform="rotate(18 62 150)"/>
+  <rect x="128" y="150" width="20" height="46" rx="10" fill="#FBD9B6" transform="rotate(-18 138 150)"/>
+
+  <!-- overalls -->
+  <path d="M70 138 L130 138 L134 196 Q100 208 66 196 Z" fill="url(#overallsRead)"/>
+  <rect x="76" y="106" width="12" height="36" rx="5" fill="#94CFC1"/>
+  <rect x="112" y="106" width="12" height="36" rx="5" fill="#94CFC1"/>
+  <rect x="86" y="146" width="28" height="22" rx="6" fill="#FFB4A2"/>
+
+  <!-- small book -->
+  <g transform="translate(70 172)">
+    <path d="M0 6 Q30 -8 60 6 L60 34 Q30 20 0 34 Z" fill="#FFFFFF" stroke="#E8785F" stroke-width="2.5"/>
+    <line x1="30" y1="-1" x2="30" y2="27" stroke="#E8785F" stroke-width="2"/>
+  </g>
+
+  <!-- head tilted slightly down -->
+  <circle cx="100" cy="68" r="40" fill="#FBD9B6"/>
+
+  <!-- hair -->
+  <path d="M60 60 Q60 22 100 22 Q140 22 140 60 Q140 40 100 40 Q60 40 60 60 Z" fill="#5C4433"/>
+  <ellipse cx="93" cy="18" rx="6" ry="10" fill="#8FCB9B" transform="rotate(-18 93 18)"/>
+  <ellipse cx="106" cy="17" rx="6" ry="10" fill="#8FCB9B" transform="rotate(14 106 17)"/>
+
+  <!-- blush -->
+  <ellipse cx="76" cy="80" rx="8" ry="5" fill="#FFB4A2" opacity="0.7"/>
+  <ellipse cx="124" cy="80" rx="8" ry="5" fill="#FFB4A2" opacity="0.7"/>
+
+  <!-- eyes looking down (curved lines = happy focused) -->
+  <path d="M80 70 Q86 66 92 70" stroke="#453D38" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M108 70 Q114 66 120 70" stroke="#453D38" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <!-- smile -->
+  <path d="M90 84 Q100 90 110 84" stroke="#453D38" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

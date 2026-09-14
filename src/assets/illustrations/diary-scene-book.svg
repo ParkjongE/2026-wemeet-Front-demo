@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-labelledby="diaryBookTitle">
+  <title id="diaryBookTitle">그림책을 읽는 모습을 담은 그림책 스타일 삽화</title>
+  <circle cx="150" cy="150" r="150" fill="#FFE3DB"/>
+  <path d="M150 110 C 110 96 80 100 70 116 L70 190 C 100 176 130 180 150 194 Z" fill="#FFFFFF" stroke="#E8785F" stroke-width="3"/>
+  <path d="M150 110 C 190 96 220 100 230 116 L230 190 C 200 176 170 180 150 194 Z" fill="#FFFFFF" stroke="#E8785F" stroke-width="3"/>
+  <circle cx="150" cy="60" r="26" fill="#FBD9B6"/>
+  <path d="M126 56 Q126 34 150 34 Q174 34 174 56 Q174 44 150 44 Q126 44 126 56 Z" fill="#5C4433"/>
+  <path d="M142 62 Q146 58 150 62" stroke="#453D38" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M150 62 Q154 58 158 62" stroke="#453D38" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+</svg>

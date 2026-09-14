@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-labelledby="diaryDrawingTitle">
+  <title id="diaryDrawingTitle">크레용으로 그림을 그리는 모습을 담은 그림책 스타일 삽화</title>
+  <circle cx="150" cy="150" r="150" fill="#E3F4F0"/>
+  <rect x="80" y="120" width="140" height="100" rx="8" fill="#FFFFFF" stroke="#A8DAD0" stroke-width="3"/>
+  <path d="M110 190 Q130 150 150 180 Q170 150 190 190" stroke="#FFB4A2" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <circle cx="120" cy="150" r="8" fill="#FFE5A0"/>
+  <g transform="translate(190 96) rotate(30)">
+    <rect x="0" y="0" width="10" height="46" rx="3" fill="#FFB4A2"/>
+    <polygon points="0,0 10,0 5,-12" fill="#E8785F"/>
+  </g>
+</svg>

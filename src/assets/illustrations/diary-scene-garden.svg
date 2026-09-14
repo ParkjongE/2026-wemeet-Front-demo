@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-labelledby="diaryGardenTitle">
+  <title id="diaryGardenTitle">작은 정원에서 꽃을 보는 모습을 담은 그림책 스타일 삽화</title>
+  <circle cx="150" cy="150" r="150" fill="#FFF9F0"/>
+  <ellipse cx="150" cy="230" rx="120" ry="26" fill="#DCEFE8"/>
+  <g transform="translate(95 190)"><line x1="0" y1="0" x2="0" y2="34" stroke="#8FCB9B" stroke-width="4"/><circle r="12" fill="#FFB4A2"/><circle r="4" fill="#FFE5A0"/></g>
+  <g transform="translate(150 178)"><line x1="0" y1="0" x2="0" y2="46" stroke="#8FCB9B" stroke-width="4"/><circle r="14" fill="#A8DAD0"/><circle r="4.5" fill="#FFE5A0"/></g>
+  <g transform="translate(205 194)"><line x1="0" y1="0" x2="0" y2="30" stroke="#8FCB9B" stroke-width="4"/><circle r="11" fill="#FFE5A0"/><circle r="4" fill="#FFB4A2"/></g>
+  <circle cx="150" cy="80" r="24" fill="#FFE5A0" opacity="0.9"/>
+</svg>

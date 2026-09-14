@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ivory: #fff9f0;
+  --color-mint: #a8dad0;
+  --color-mint-light: #e3f4f0;
+  --color-mint-deep: #4d8b7c;
+  --color-yellow: #ffe5a0;
+  --color-yellow-light: #fff6e0;
+  --color-coral: #ffb4a2;
+  --color-coral-light: #ffe3db;
+  --color-coral-deep: #e8785f;
+  --color-brown: #453d38;
+  --color-hairline: #ead9c4;
+  --font-story: "Jua", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-handwriting: "Gaegu", "Jua", "Apple SD Gothic Neo", sans-serif;
+  --font-body: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", -apple-system,
+    sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  overscroll-behavior-y: none;
+  font-family: var(--font-body);
+  background-color: var(--color-ivory);
+  color: var(--color-brown);
+}
+
+@keyframes page-flip {
+  0%,
+  100% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+.ruled-paper {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 35px,
+    color-mix(in srgb, var(--color-mint) 45%, transparent) 36px
+  );
+  background-position: 0 6px;
+  line-height: 36px;
+}
+
+@keyframes mascot-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-mascot-bob {
+  animation: mascot-bob 3.2s ease-in-out infinite;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(4deg);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
