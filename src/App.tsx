@@ -4,7 +4,9 @@ import { GuestOnly, RequireAuth, RequireChild, RequireNoChild } from "./auth/gua
 import { ToastProvider } from "./components/common/ToastProvider";
 import AppHome from "./pages/AppHome";
 import DiaryEntryPage from "./pages/DiaryEntryPage";
-import StorybookPage from "./pages/StorybookPage";
+import StorybookNewPage from "./pages/StorybookNewPage";
+import StorybookLibraryPage from "./pages/StorybookLibraryPage";
+import StorybookDetailPage from "./pages/StorybookDetailPage";
 import IntroPage from "./pages/IntroPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
@@ -44,7 +46,9 @@ const router = createBrowserRouter([
             children: [
               { path: "/", element: <AppHome /> },
               { path: "/diary/:date", element: <DiaryEntryPage /> },
-              { path: "/storybooks/new", element: <StorybookPage /> },
+              { path: "/storybooks", element: <StorybookLibraryPage /> },
+              { path: "/storybooks/new", element: <StorybookNewPage /> },
+              { path: "/storybooks/:id", element: <StorybookDetailPage /> },
               { path: "/settings", element: <SettingsPage /> },
             ],
           },

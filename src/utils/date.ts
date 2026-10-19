@@ -46,3 +46,20 @@ export const MONTH_LABEL_FORMAT = new Intl.DateTimeFormat("ko-KR", {
   year: "numeric",
   month: "long",
 });
+
+export function daysBetweenInclusive(start: string, end: string): number {
+  const toTime = (s: string) => {
+    const [y, m, d] = s.split("-").map(Number);
+    return Date.UTC(y, m - 1, d);
+  };
+  return Math.round((toTime(end) - toTime(start)) / 86_400_000) + 1;
+}
+
+export function formatMonthDay(dateStr: string): string {
+  const [, m, d] = dateStr.split("-").map(Number);
+  return `${m}월 ${d}일`;
+}
+
+export function formatPeriod(start: string, end: string): string {
+  return start === end ? formatMonthDay(start) : `${formatMonthDay(start)} ~ ${formatMonthDay(end)}`;
+}

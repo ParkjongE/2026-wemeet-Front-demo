@@ -1,7 +1,7 @@
-import type { LegacyStorybook as Storybook } from "../types/legacy";
+import type { StorybookPage } from "../types";
 import { shovelStoryScenes, genericDiaryScenes } from "./illustrations";
 
-export const LESSON_TAGS = ["나눔", "용기", "정직", "배려", "끈기"] as const;
+export { LESSON_TAGS } from "../constants/storybook";
 
 interface LessonTemplate {
   title: (name: string) => string;
@@ -107,30 +107,10 @@ export function buildStoryContent(lesson: string | null, protagonistName: string
   };
 }
 
-export function generateDummyStorybook(
-  lesson: string,
-  periodStart: string,
-  periodEnd: string,
-  protagonistName: string,
-): Storybook {
-  const name = protagonistName.trim() || "우리 아이";
-  const content = buildStoryContent(lesson, name);
-
-  return {
-    id: `storybook-${Date.now()}`,
-    title: content.title,
-    lesson,
-    protagonistName: name,
-    periodStart,
-    periodEnd,
-    createdAt: new Date().toISOString(),
-    pages: content.pages,
-  };
-}
-
-export const SAMPLE_STORYBOOK = generateDummyStorybook(
-  "나눔",
-  "2026-09-01",
-  "2026-09-13",
-  "서아",
-);
+// 소개 페이지에서 보여주는 예시 동화
+const sampleContent = buildStoryContent("나눔", "서아");
+export const SAMPLE_STORYBOOK: { title: string; lessonTag: string; pages: StorybookPage[] } = {
+  title: sampleContent.title,
+  lessonTag: "나눔",
+  pages: sampleContent.pages.map((page, i) => ({ pageNo: i + 1, ...page })),
+};

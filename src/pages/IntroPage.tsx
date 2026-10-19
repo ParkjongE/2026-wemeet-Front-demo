@@ -224,7 +224,7 @@ export default function IntroPage() {
           <div className="mt-4">
             <p className="font-story text-lg text-coral-deep">{SAMPLE_STORYBOOK.title}</p>
             <p className="mt-1 text-sm text-brown/60">
-              전하고 싶은 마음: {SAMPLE_STORYBOOK.lesson} · 체험용 그림동화 · {SAMPLE_STORYBOOK.pages.length}페이지
+              전하고 싶은 마음: {SAMPLE_STORYBOOK.lessonTag} · 체험용 그림동화 · {SAMPLE_STORYBOOK.pages.length}페이지
             </p>
           </div>
         </div>

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { LegacyStorybook as Storybook } from "../../types/legacy";
+import type { StorybookPage } from "../../types";
 
 interface StorybookViewerProps {
-  storybook: Storybook;
+  storybook: { title: string | null; pages: StorybookPage[] };
   footerActions?: ReactNode;
 }
 
@@ -51,7 +51,7 @@ export default function StorybookViewer({ storybook, footerActions }: StorybookV
       >
         <img
           src={page.imageUrl}
-          alt={`${storybook.title} ${pageIndex + 1}페이지 삽화`}
+          alt={`${storybook.title ?? "동화"} ${pageIndex + 1}페이지 삽화`}
           loading={pageIndex === 0 ? undefined : "lazy"}
           className="h-56 w-full object-cover sm:h-72 lg:h-auto lg:w-1/2"
         />
@@ -66,7 +66,7 @@ export default function StorybookViewer({ storybook, footerActions }: StorybookV
           onClick={goPrev}
           disabled={isFirst}
           aria-label="이전 페이지"
-          className="absolute left-2 top-24 -translate-y-1/2 rounded-full bg-white/90 p-2 text-brown shadow disabled:opacity-30 sm:top-32 lg:top-1/2"
+          className="absolute left-2 top-24 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-brown shadow disabled:opacity-30 sm:top-32 lg:top-1/2"
         >
           <ChevronLeft size={20} />
         </button>
@@ -75,7 +75,7 @@ export default function StorybookViewer({ storybook, footerActions }: StorybookV
           onClick={goNext}
           disabled={isLast}
           aria-label="다음 페이지"
-          className="absolute right-2 top-24 -translate-y-1/2 rounded-full bg-white/90 p-2 text-brown shadow disabled:opacity-30 sm:top-32 lg:top-1/2"
+          className="absolute right-2 top-24 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-brown shadow disabled:opacity-30 sm:top-32 lg:top-1/2"
         >
           <ChevronRight size={20} />
         </button>
@@ -85,19 +85,23 @@ export default function StorybookViewer({ storybook, footerActions }: StorybookV
         <span className="text-xs text-brown/50">
           {pageIndex + 1} / {storybook.pages.length}
         </span>
-        <div className="flex gap-2">
+        <div className="flex">
           {storybook.pages.map((p, i) => (
             <button
-              key={p.imageUrl + i}
+              key={p.pageNo}
               type="button"
               onClick={() => setPageIndex(i)}
               aria-label={`${i + 1}페이지로 이동`}
               aria-current={i === pageIndex}
-              className={[
-                "h-2.5 w-2.5 rounded-full transition-colors",
-                i === pageIndex ? "bg-coral" : "bg-gray-300",
-              ].join(" ")}
-            />
+              className="flex h-11 w-6 items-center justify-center"
+            >
+              <span
+                className={[
+                  "h-2.5 w-2.5 rounded-full transition-colors",
+                  i === pageIndex ? "bg-coral" : "bg-gray-300",
+                ].join(" ")}
+              />
+            </button>
           ))}
         </div>
       </div>

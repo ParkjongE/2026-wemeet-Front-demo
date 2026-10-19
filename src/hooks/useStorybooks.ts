@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, type CreateStorybookInput } from "../api";
-import type { StorybookStatus } from "../types";
+import type { Storybook, StorybookStatus } from "../types";
 import { queryKeys } from "./queryKeys";
 
 const isInProgress = (status: StorybookStatus) => status === "queued" || status === "processing";
@@ -17,9 +17,18 @@ export function useStorybooks(childId: string | undefined) {
 }
 
 export function useStorybook(id: string | undefined) {
+  const queryClient = useQueryClient();
   return useQuery({
     queryKey: queryKeys.storybook(id ?? ""),
-    queryFn: () => api.getStorybook(id!),
+    queryFn: async () => {
+      const previous = queryClient.getQueryData<Storybook>(queryKeys.storybook(id!));
+      const book = await api.getStorybook(id!);
+      // 상태가 바뀌면 서재 목록도 새로 받는다.
+      if (previous && previous.status !== book.status) {
+        void queryClient.invalidateQueries({ queryKey: queryKeys.storybooks(book.childId) });
+      }
+      return book;
+    },
     enabled: !!id,
     refetchInterval: (query) =>
       query.state.data && isInProgress(query.state.data.status) ? 5_000 : false,

@@ -1,14 +1,14 @@
 import type { StorybooksApi } from "../storybooks";
 import type { Storybook, StorybookStatus, StorybookSummary } from "../../types";
+import { STORY_PERIOD_MAX_DAYS } from "../../constants/storybook";
 import { buildStoryContent } from "../../mock/storybook";
-import { todayString } from "../../utils/date";
+import { daysBetweenInclusive, todayString } from "../../utils/date";
 import { loadDb, newId, nowIso, saveDb, type MockDb, type MockStorybook } from "./db";
 import { clone, fail, requireChild, requireUser, simulateNetwork } from "./util";
 
 // 요청 직후 queued → 약 5초 뒤 processing → 약 15초 뒤 completed(또는 failed).
 const PROCESSING_AFTER_MS = 5_000;
 const FINISHED_AFTER_MS = 15_000;
-const MAX_PERIOD_DAYS = 31;
 const FAIL_KEYWORD = "실패테스트";
 
 function statusOf(book: MockStorybook): StorybookStatus {
@@ -63,14 +63,6 @@ function toStorybook(book: MockStorybook, db: MockDb): Storybook {
   };
 }
 
-function daysBetween(start: string, end: string): number {
-  const toTime = (s: string) => {
-    const [y, m, d] = s.split("-").map(Number);
-    return Date.UTC(y, m - 1, d);
-  };
-  return Math.round((toTime(end) - toTime(start)) / 86_400_000) + 1;
-}
-
 function requireOwnedStorybook(id: string, db: MockDb): MockStorybook {
   const user = requireUser(db);
   const book = db.storybooks.find((b) => b.id === id);
@@ -94,8 +86,8 @@ export const mockStorybooksApi: StorybooksApi = {
     const { periodStart, periodEnd } = input;
     if (periodStart > periodEnd) fail(400, "INVALID_PERIOD", "기간을 다시 확인해 주세요.");
     if (periodEnd > todayString()) fail(400, "INVALID_PERIOD", "미래 날짜는 고를 수 없어요.");
-    if (daysBetween(periodStart, periodEnd) > MAX_PERIOD_DAYS) {
-      fail(400, "PERIOD_TOO_LONG", `기간은 최대 ${MAX_PERIOD_DAYS}일까지 고를 수 있어요.`);
+    if (daysBetweenInclusive(periodStart, periodEnd) > STORY_PERIOD_MAX_DAYS) {
+      fail(400, "PERIOD_TOO_LONG", `기간은 최대 ${STORY_PERIOD_MAX_DAYS}일까지 고를 수 있어요.`);
     }
     const diaryCount = db.diaries.filter(
       (d) => d.childId === childId && d.date >= periodStart && d.date <= periodEnd,
