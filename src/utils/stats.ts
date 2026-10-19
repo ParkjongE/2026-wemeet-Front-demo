@@ -1,5 +1,9 @@
-import type { LegacyDiaryEntry as DiaryEntry } from "../types/legacy";
+import type { DiaryEntry } from "../types";
 import { addDays, todayString } from "./date";
+
+export function toEntriesByDate(entries: DiaryEntry[] | undefined): Map<string, DiaryEntry> {
+  return new Map((entries ?? []).map((entry) => [entry.date, entry]));
+}
 
 export function computeStreak(entriesByDate: Map<string, DiaryEntry>): number {
   let streak = 0;

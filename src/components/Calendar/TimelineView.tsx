@@ -1,5 +1,5 @@
 import { NotebookPen } from "lucide-react";
-import type { LegacyDiaryEntry as DiaryEntry } from "../../types/legacy";
+import type { DiaryEntry } from "../../types";
 import { getWeatherOption } from "../../utils/weather";
 
 interface TimelineViewProps {
@@ -43,9 +43,9 @@ export default function TimelineView({ entries, onSelect }: TimelineViewProps) {
               className="flex w-full items-center gap-3 rounded-2xl bg-white/80 p-3 text-left shadow-sm transition-transform hover:scale-[1.01]"
             >
               <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-yellow-light">
-                {entry.imageUrls[0] ? (
+                {entry.photos[0]?.url ? (
                   <img
-                    src={entry.imageUrls[0]}
+                    src={entry.photos[0].url}
                     alt=""
                     loading="lazy"
                     className="h-full w-full object-cover"

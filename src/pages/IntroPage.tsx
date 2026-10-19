@@ -5,12 +5,13 @@ import IntroNav from "../components/Intro/IntroNav";
 import ExampleRecordCard from "../components/Intro/ExampleRecordCard";
 import CalendarGrid from "../components/Calendar/CalendarGrid";
 import StorybookViewer from "../components/StorybookViewer/StorybookViewer";
-import { useDiary } from "../context/useDiary";
+import { exampleDiaryEntries } from "../mock/diaryEntries";
+import { toEntriesByDate } from "../utils/stats";
 import { hero, mascot, genericDiaryScenes, pointIcons } from "../mock/illustrations";
 import { SAMPLE_STORYBOOK, LESSON_TAGS } from "../mock/storybook";
 
 export default function IntroPage() {
-  const { entriesByDate } = useDiary();
+  const entriesByDate = toEntriesByDate(exampleDiaryEntries);
   const today = new Date();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 

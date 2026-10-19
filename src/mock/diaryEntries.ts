@@ -1,4 +1,4 @@
-import type { LegacyDiaryEntry as DiaryEntry } from "../types/legacy";
+import type { DiaryEntry } from "../types";
 import { genericDiaryScenes } from "./illustrations";
 
 function formatDate(d: Date): string {
@@ -85,12 +85,23 @@ export const seedEntries: SeedEntry[] = [
   },
 ];
 
-export const diaryEntries: DiaryEntry[] = seedEntries.map((entry) => ({
+// 소개 페이지 캘린더에 보여줄 예시 기록 (API와 같은 모양)
+export const exampleDiaryEntries: DiaryEntry[] = seedEntries.map((entry, i) => ({
+  id: `example-${i}`,
+  childId: "example",
   date: daysAgo(entry.offset),
   text: entry.text,
-  moodTag: entry.moodTag,
-  imageUrls:
+  weather: null,
+  moodTag: entry.moodTag ?? null,
+  photos:
     entry.textOnly || entry.sceneIndex === undefined
       ? []
-      : [genericDiaryScenes[entry.sceneIndex % genericDiaryScenes.length]],
+      : [
+          {
+            id: `example-photo-${i}`,
+            url: genericDiaryScenes[entry.sceneIndex % genericDiaryScenes.length],
+          },
+        ],
+  createdAt: "",
+  updatedAt: "",
 }));

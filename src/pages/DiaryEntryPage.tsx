@@ -1,12 +1,24 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Pencil } from "lucide-react";
-import { useDiary } from "../context/useDiary";
+import { useState } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { CalendarX, Pencil, Trash2 } from "lucide-react";
+import { errorMessage } from "../api";
+import { useCurrentChild } from "../auth/authContext";
 import PhotoUploader from "../components/DiaryForm/PhotoUploader";
 import Polaroid from "../components/DiaryForm/Polaroid";
 import AppHeader from "../components/AppHeader";
-import type { Weather } from "../types";
+import Button from "../components/common/Button";
+import ConfirmDialog from "../components/common/ConfirmDialog";
+import ErrorBox from "../components/common/ErrorBox";
+import Skeleton from "../components/common/Skeleton";
+import { useToast } from "../components/common/toastContext";
+import { useDeleteDiary, useDiary, useSaveDiary } from "../hooks/useDiaries";
+import { usePhotoUploads } from "../hooks/usePhotoUploads";
+import { useUnsavedChangesGuard } from "../hooks/useUnsavedChangesGuard";
+import type { DiaryEntry, Weather } from "../types";
+import { todayString } from "../utils/date";
 import { WEATHER_OPTIONS, getWeatherOption } from "../utils/weather";
+
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 function formatDisplayDate(dateStr: string): { year: string; monthDay: string; weekday: string } {
   const [y, m, d] = dateStr.split("-").map(Number);
@@ -18,91 +30,146 @@ function formatDisplayDate(dateStr: string): { year: string; monthDay: string; w
   };
 }
 
+function PageShell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mx-auto max-w-md px-4 py-6 sm:max-w-xl lg:max-w-2xl lg:py-10">
+      <AppHeader title="하루 기록" />
+      {children}
+    </div>
+  );
+}
+
 export default function DiaryEntryPage() {
   const { date } = useParams<{ date: string }>();
+  const child = useCurrentChild();
   const navigate = useNavigate();
-  const { getEntry, upsertEntry } = useDiary();
+  const isValidDate = !!date && DATE_PATTERN.test(date);
+  const isFuture = isValidDate && date > todayString();
+  const diaryQuery = useDiary(child.id, isValidDate && !isFuture ? date : undefined);
 
-  const existingEntry = date ? getEntry(date) : undefined;
-  const [isEditing, setIsEditing] = useState(!existingEntry);
-  const [text, setText] = useState(existingEntry?.text ?? "");
-  const [imageUrls, setImageUrls] = useState<string[]>(existingEntry?.imageUrls ?? []);
-  const [weather, setWeather] = useState<Weather | undefined>(existingEntry?.weather);
-  const [showValidationError, setShowValidationError] = useState(false);
+  if (!isValidDate) return <Navigate to="/" replace />;
 
-  const imageUrlsRef = useRef(imageUrls);
-  imageUrlsRef.current = imageUrls;
-  const existingEntryRef = useRef(existingEntry);
-  existingEntryRef.current = existingEntry;
-  const justSavedRef = useRef(false);
-
-  useEffect(() => {
-    return () => {
-      if (justSavedRef.current) return;
-      const savedUrls = new Set(existingEntryRef.current?.imageUrls ?? []);
-      imageUrlsRef.current.forEach((url) => {
-        if (url.startsWith("blob:") && !savedUrls.has(url)) {
-          URL.revokeObjectURL(url);
-        }
-      });
-    };
-  }, []);
-
-  useEffect(() => {
-    setIsEditing(!existingEntry);
-    setText(existingEntry?.text ?? "");
-    setImageUrls(existingEntry?.imageUrls ?? []);
-    setWeather(existingEntry?.weather);
-    setShowValidationError(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [date]);
-
-  if (!date) {
-    return null;
+  if (isFuture) {
+    return (
+      <PageShell>
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-white p-8 text-center shadow-md">
+          <CalendarX size={32} className="text-brown/40" aria-hidden />
+          <p className="font-story text-lg text-brown">아직 오지 않은 날이에요</p>
+          <p className="text-sm text-brown/60">미래 날짜에는 기록할 수 없어요.</p>
+          <Button variant="ghost" className="mt-2" onClick={() => navigate(`/diary/${todayString()}`)}>
+            오늘 기록하러 가기
+          </Button>
+        </div>
+      </PageShell>
+    );
   }
+
+  return (
+    <PageShell>
+      {diaryQuery.isPending ? (
+        <div className="space-y-4 rounded-2xl bg-white p-6 shadow-md" role="status" aria-label="기록을 불러오는 중">
+          <Skeleton className="h-20" />
+          <Skeleton className="h-40" />
+          <Skeleton className="h-24" />
+        </div>
+      ) : diaryQuery.isError ? (
+        <ErrorBox
+          message={`기록을 불러오지 못했어요. ${errorMessage(diaryQuery.error)}`}
+          onRetry={() => void diaryQuery.refetch()}
+        />
+      ) : (
+        <DiaryEditor key={date} childId={child.id} date={date} entry={diaryQuery.data} />
+      )}
+    </PageShell>
+  );
+}
+
+interface DiaryEditorProps {
+  childId: string;
+  date: string;
+  entry: DiaryEntry | null;
+}
+
+function DiaryEditor({ childId, date, entry }: DiaryEditorProps) {
+  const navigate = useNavigate();
+  const toast = useToast();
+  const saveDiary = useSaveDiary(childId);
+  const deleteDiary = useDeleteDiary(childId);
+
+  const [isEditing, setIsEditing] = useState(!entry);
+  const [text, setText] = useState(entry?.text ?? "");
+  const [weather, setWeather] = useState<Weather | null>(entry?.weather ?? null);
+  const uploads = usePhotoUploads(entry?.photos ?? []);
+  const [showValidationError, setShowValidationError] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const savedPhotoIds = entry?.photos.map((p) => p.id) ?? [];
+  const photosChanged =
+    uploads.hasNew ||
+    uploads.items.length !== savedPhotoIds.length ||
+    uploads.items.some((item, i) => item.kind !== "saved" || item.photoId !== savedPhotoIds[i]);
+  const isDirty =
+    isEditing && (text !== (entry?.text ?? "") || weather !== (entry?.weather ?? null) || photosChanged);
+  const { blocker, allowLeave } = useUnsavedChangesGuard(isDirty && !saveDiary.isSuccess);
 
   const { year, monthDay, weekday } = formatDisplayDate(date);
   const selectedWeather = getWeatherOption(weather);
-  const canSave = text.trim().length > 0 || imageUrls.length > 0;
-
-  const revokeUnsavedBlobUrls = (urls: string[]) => {
-    const savedUrls = new Set(existingEntry?.imageUrls ?? []);
-    urls.forEach((url) => {
-      if (url.startsWith("blob:") && !savedUrls.has(url)) {
-        URL.revokeObjectURL(url);
-      }
-    });
-  };
+  const canSave = text.trim().length > 0 || uploads.items.length > 0;
+  const isBusy = saveDiary.isPending || deleteDiary.isPending;
 
   const handleSave = () => {
     if (!canSave) {
       setShowValidationError(true);
       return;
     }
-    justSavedRef.current = true;
-    upsertEntry({
-      date,
-      text: text.trim(),
-      imageUrls,
-      moodTag: existingEntry?.moodTag,
-      weather,
-    });
-    navigate("/");
+    if (uploads.isUploading || uploads.hasFailed || isBusy) return;
+    saveDiary.mutate(
+      {
+        date,
+        input: { text: text.trim(), weather, moodTag: entry?.moodTag ?? null, photoIds: uploads.photoIds },
+      },
+      {
+        onSuccess: () => {
+          toast.show(entry ? "기록을 수정했어요." : "기록을 남겼어요.");
+          allowLeave();
+          navigate("/");
+        },
+        onError: (error) => toast.show(errorMessage(error), "error"),
+      },
+    );
   };
 
   const handleCancelEdit = () => {
-    revokeUnsavedBlobUrls(imageUrls);
-    setIsEditing(false);
-    setText(existingEntry?.text ?? "");
-    setImageUrls(existingEntry?.imageUrls ?? []);
-    setWeather(existingEntry?.weather);
+    uploads.reset(entry?.photos ?? []);
+    setText(entry?.text ?? "");
+    setWeather(entry?.weather ?? null);
     setShowValidationError(false);
+    saveDiary.reset();
+    setIsEditing(false);
   };
 
-  return (
-    <div className="mx-auto max-w-md px-4 py-6 sm:max-w-xl lg:max-w-2xl lg:py-10">
-      <AppHeader title="오늘의 기록" />
+  const handleDelete = () => {
+    deleteDiary.mutate(date, {
+      onSuccess: () => {
+        toast.show("기록을 삭제했어요.");
+        allowLeave();
+        navigate("/");
+      },
+      onError: (error) => {
+        setConfirmDelete(false);
+        toast.show(errorMessage(error), "error");
+      },
+    });
+  };
 
+  const saveHint = uploads.isUploading
+    ? "사진을 올리는 중이에요. 끝나면 저장할 수 있어요."
+    : uploads.hasFailed
+      ? "올리지 못한 사진이 있어요. 다시 올리거나 빼 주세요."
+      : null;
+
+  return (
+    <>
       <div className="overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-black/5">
         {/* diary header strip: date | weather */}
         <div className="grid grid-cols-2 divide-x divide-dashed divide-mint border-b-4 border-double border-mint">
@@ -111,9 +178,9 @@ export default function DiaryEntryPage() {
             <p className="font-handwriting text-2xl text-brown">{monthDay}</p>
             <p className="text-xs text-brown/50">{weekday}</p>
           </div>
-          <div className="flex flex-col items-center justify-center gap-1 px-4 py-4">
+          <div className="flex flex-col items-center justify-center gap-1 px-2 py-4">
             {isEditing ? (
-              <div className="flex flex-wrap justify-center gap-1.5">
+              <div className="flex flex-wrap justify-center gap-0.5">
                 {WEATHER_OPTIONS.map((option) => {
                   const Icon = option.icon;
                   const active = weather === option.value;
@@ -121,11 +188,11 @@ export default function DiaryEntryPage() {
                     <button
                       key={option.value}
                       type="button"
-                      onClick={() => setWeather(active ? undefined : option.value)}
+                      onClick={() => setWeather(active ? null : option.value)}
                       aria-label={option.label}
                       aria-pressed={active}
                       className={[
-                        "rounded-full p-2 transition-colors",
+                        "flex h-11 w-11 items-center justify-center rounded-full transition-colors",
                         active ? "bg-yellow-light" : "hover:bg-mint-light",
                       ].join(" ")}
                     >
@@ -150,16 +217,30 @@ export default function DiaryEntryPage() {
             <>
               <div>
                 <p className="mb-1 text-sm font-semibold text-brown">오늘의 사진을 올려주세요</p>
-                <p className="mb-2 text-xs text-brown/50">여러 장을 함께 남길 수 있어요.</p>
-                <PhotoUploader imageUrls={imageUrls} onChange={setImageUrls} />
+                <p className="mb-2 text-xs text-brown/50">고르면 바로 올라가요. 최대 5장까지 남길 수 있어요.</p>
+                <PhotoUploader
+                  items={uploads.items}
+                  onAdd={uploads.add}
+                  onRemove={uploads.remove}
+                  onRetry={uploads.retry}
+                  disabled={isBusy}
+                />
               </div>
 
               <div>
-                <p className="mb-1 text-sm font-semibold text-brown">오늘 어떤 일이 있었나요?</p>
+                <label htmlFor="diary-text" className="mb-1 block text-sm font-semibold text-brown">
+                  오늘 어떤 일이 있었나요?
+                </label>
                 <div className="ruled-paper rounded-lg bg-yellow-light/40 px-3">
                   <textarea
+                    id="diary-text"
                     value={text}
-                    onChange={(e) => setText(e.target.value)}
+                    onChange={(e) => {
+                      setText(e.target.value);
+                      setShowValidationError(false);
+                    }}
+                    maxLength={1000}
+                    readOnly={isBusy}
                     placeholder="친구에게 먼저 장난감을 빌려줬어요. 둘이 함께 노는 모습이 참 예뻤어요."
                     rows={6}
                     className="w-full resize-none bg-transparent font-handwriting text-lg text-brown outline-none placeholder:font-body placeholder:text-sm placeholder:text-brown/40"
@@ -175,54 +256,84 @@ export default function DiaryEntryPage() {
                   사진이나 이야기를 하나 이상 남겨주세요.
                 </p>
               )}
+              {saveDiary.isError && (
+                <p role="alert" className="rounded-xl bg-coral-light/60 px-4 py-3 text-sm text-brown">
+                  저장하지 못했어요. {errorMessage(saveDiary.error)} 입력한 내용은 그대로 있어요.
+                </p>
+              )}
+              {saveHint && <p className="text-right text-xs text-brown/60">{saveHint}</p>}
 
               <div className="flex justify-end gap-2">
-                {existingEntry && (
-                  <button
-                    type="button"
-                    onClick={handleCancelEdit}
-                    className="rounded-full px-5 py-2 text-sm font-medium text-brown/60 hover:bg-gray-100"
-                  >
+                {entry && (
+                  <Button variant="ghost" onClick={handleCancelEdit} disabled={isBusy} className="text-sm">
                     취소
-                  </button>
+                  </Button>
                 )}
-                <button
-                  type="button"
+                <Button
                   onClick={handleSave}
-                  className="rounded-full bg-coral px-6 py-2 text-sm font-medium text-white shadow"
+                  loading={saveDiary.isPending}
+                  disabled={uploads.isUploading || uploads.hasFailed}
+                  className="text-sm"
                 >
-                  {existingEntry ? "수정한 기록 저장" : "기록 남기기"}
-                </button>
+                  {saveDiary.isPending ? "저장하는 중…" : entry ? "수정한 기록 저장" : "기록 남기기"}
+                </Button>
               </div>
             </>
-          ) : existingEntry ? (
+          ) : entry ? (
             <>
-              {existingEntry.imageUrls.length > 0 && (
+              {entry.photos.length > 0 && (
                 <div className="grid grid-cols-2 gap-4 px-2 py-2 sm:grid-cols-3">
-                  {existingEntry.imageUrls.map((url, i) => (
-                    <Polaroid key={url} src={url} alt={`${date} 기록 사진 ${i + 1}`} index={i} />
+                  {entry.photos.map((photo, i) => (
+                    <Polaroid key={photo.id} src={photo.url} alt={`${date} 기록 사진 ${i + 1}`} index={i} />
                   ))}
                 </div>
               )}
-              <div className="ruled-paper rounded-lg bg-yellow-light/40 px-3 py-1">
-                <p className="whitespace-pre-wrap font-handwriting text-lg leading-9 text-brown">
-                  {existingEntry.text}
-                </p>
-              </div>
-              <div className="flex justify-end">
-                <button
-                  type="button"
+              {entry.text && (
+                <div className="ruled-paper rounded-lg bg-yellow-light/40 px-3 py-1">
+                  <p className="whitespace-pre-wrap font-handwriting text-lg leading-9 text-brown">
+                    {entry.text}
+                  </p>
+                </div>
+              )}
+              <div className="flex justify-between gap-2">
+                <Button variant="danger" onClick={() => setConfirmDelete(true)} className="text-sm">
+                  <Trash2 size={16} aria-hidden />
+                  삭제
+                </Button>
+                <Button
+                  variant="ghost"
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-1 rounded-full bg-yellow px-5 py-2 text-sm font-medium text-brown shadow"
+                  className="bg-yellow text-sm hover:bg-yellow/80"
                 >
-                  <Pencil size={14} />
+                  <Pencil size={14} aria-hidden />
                   수정
-                </button>
+                </Button>
               </div>
             </>
           ) : null}
         </div>
       </div>
-    </div>
+
+      <ConfirmDialog
+        open={confirmDelete}
+        title="이 날의 기록을 지울까요?"
+        description="사진과 글이 모두 사라지고 되돌릴 수 없어요."
+        confirmLabel="삭제하기"
+        destructive
+        pending={deleteDiary.isPending}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmDelete(false)}
+      />
+      <ConfirmDialog
+        open={blocker.state === "blocked"}
+        title="저장하지 않은 내용이 있어요"
+        description="이 화면을 나가면 작성한 내용이 사라져요."
+        confirmLabel="나가기"
+        cancelLabel="계속 쓰기"
+        destructive
+        onConfirm={() => blocker.proceed?.()}
+        onCancel={() => blocker.reset?.()}
+      />
+    </>
   );
 }

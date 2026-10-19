@@ -1,5 +1,5 @@
 import { NotebookPen } from "lucide-react";
-import type { LegacyDiaryEntry as DiaryEntry } from "../../types/legacy";
+import type { DiaryEntry } from "../../types";
 
 interface RecentEntriesStripProps {
   entries: DiaryEntry[];
@@ -27,9 +27,9 @@ export default function RecentEntriesStrip({ entries, onSelect, limit = 8 }: Rec
           className="flex shrink-0 flex-col items-center gap-1.5 transition-transform hover:scale-105"
         >
           <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border-2 border-white bg-yellow-light shadow-sm sm:h-20 sm:w-20">
-            {entry.imageUrls[0] ? (
+            {entry.photos[0]?.url ? (
               <img
-                src={entry.imageUrls[0]}
+                src={entry.photos[0].url}
                 alt=""
                 loading="lazy"
                 className="h-full w-full object-cover"

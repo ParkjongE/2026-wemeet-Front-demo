@@ -1,5 +1,5 @@
 import { NotebookPen } from "lucide-react";
-import type { LegacyDiaryEntry as DiaryEntry } from "../../types/legacy";
+import type { DiaryEntry } from "../../types";
 import { buildMonthGrid, todayString, WEEKDAY_LABELS } from "../../utils/date";
 
 interface CalendarGridProps {
@@ -7,6 +7,7 @@ interface CalendarGridProps {
   month: number; // 0-indexed
   entriesByDate: Map<string, DiaryEntry>;
   onDayClick: (dateStr: string) => void;
+  disableFuture?: boolean;
 }
 
 export default function CalendarGrid({
@@ -14,6 +15,7 @@ export default function CalendarGrid({
   month,
   entriesByDate,
   onDayClick,
+  disableFuture = false,
 }: CalendarGridProps) {
   const cells = buildMonthGrid(year, month);
   const today = todayString();
@@ -33,15 +35,17 @@ export default function CalendarGrid({
       <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
         {cells.map((cell) => {
           const entry = entriesByDate.get(cell.dateStr);
-          const hasPhoto = !!entry?.imageUrls[0];
+          const hasPhoto = !!entry?.photos[0];
           const isTextOnly = !!entry && !hasPhoto;
           const isToday = cell.dateStr === today;
+          const isDisabled = disableFuture && cell.dateStr > today;
 
           return (
             <button
               key={cell.dateStr}
               type="button"
               onClick={() => onDayClick(cell.dateStr)}
+              disabled={isDisabled}
               aria-label={`${cell.date.getMonth() + 1}월 ${cell.date.getDate()}일${entry ? ", 기록 있음" : ""}`}
               className={[
                 "relative aspect-square rounded-xl flex flex-col items-center justify-center overflow-hidden transition-colors",
@@ -49,12 +53,13 @@ export default function CalendarGrid({
                   ? "bg-white"
                   : "bg-white/40 text-gray-300",
                 isToday ? "ring-2 ring-coral" : "",
-                "hover:bg-yellow-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-coral",
+                isDisabled ? "cursor-default opacity-40" : "hover:bg-yellow-light",
+                "focus-visible:outline focus-visible:outline-2 focus-visible:outline-coral",
               ].join(" ")}
             >
               {hasPhoto && (
                 <img
-                  src={entry.imageUrls[0]}
+                  src={entry.photos[0].url}
                   alt=""
                   loading="lazy"
                   className="absolute inset-0 h-full w-full object-cover opacity-85"

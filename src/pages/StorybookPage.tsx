@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Wand2, RotateCcw, CalendarDays, NotebookPen } from "lucide-react";
 import { LESSON_TAGS, generateDummyStorybook } from "../mock/storybook";
 import type { LegacyStorybook as Storybook } from "../types/legacy";
+import type { DiaryEntry } from "../types";
 import { addDays, todayString } from "../utils/date";
-import { useDiary } from "../context/useDiary";
+import { useCurrentChild } from "../auth/authContext";
+import { useDiaries } from "../hooks/useDiaries";
 import StorybookViewer from "../components/StorybookViewer/StorybookViewer";
 import AppHeader from "../components/AppHeader";
 import { mascot } from "../mock/illustrations";
@@ -16,7 +18,7 @@ const DEFAULT_NAME = "서아";
 
 export default function StorybookPage() {
   const navigate = useNavigate();
-  const { entriesByDate } = useDiary();
+  const child = useCurrentChild();
 
   const [step, setStep] = useState<Step>("select");
   const [selectedLesson, setSelectedLesson] = useState<string>(LESSON_TAGS[0]);
@@ -37,9 +39,8 @@ export default function StorybookPage() {
 
   const lesson = useCustomLesson ? customLesson.trim() : selectedLesson;
 
-  const selectedEntries = Array.from(entriesByDate.values())
-    .filter((entry) => entry.date >= periodStart && entry.date <= periodEnd)
-    .sort((a, b) => a.date.localeCompare(b.date));
+  const periodQuery = useDiaries(child.id, periodStart, periodEnd);
+  const selectedEntries = periodQuery.data ?? [];
 
   const validate = (): string | null => {
     if (!periodStart || !periodEnd) return "기간을 선택해주세요.";
@@ -129,8 +130,8 @@ export default function StorybookPage() {
                     key={entry.date}
                     className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-hairline bg-yellow-light"
                   >
-                    {entry.imageUrls[0] ? (
-                      <img src={entry.imageUrls[0]} alt="" loading="lazy" className="h-full w-full object-cover" />
+                    {entry.photos[0]?.url ? (
+                      <img src={entry.photos[0]?.url} alt="" loading="lazy" className="h-full w-full object-cover" />
                     ) : (
                       <NotebookPen size={18} className="text-brown/60" />
                     )}
@@ -249,7 +250,7 @@ function LoadingBook() {
 
 interface StorybookResultProps {
   storybook: Storybook;
-  originEntries: { date: string; text: string; imageUrls: string[] }[];
+  originEntries: DiaryEntry[];
   onRestart: () => void;
   onBackHome: () => void;
 }
@@ -301,9 +302,9 @@ function StorybookResult({ storybook, originEntries, onRestart, onBackHome }: St
                 key={entry.date}
                 className="w-40 shrink-0 rounded-xl border border-hairline bg-yellow-light/50 p-2.5"
               >
-                {entry.imageUrls[0] && (
+                {entry.photos[0]?.url && (
                   <img
-                    src={entry.imageUrls[0]}
+                    src={entry.photos[0]?.url}
                     alt=""
                     loading="lazy"
                     className="mb-1.5 h-20 w-full rounded-lg object-cover"

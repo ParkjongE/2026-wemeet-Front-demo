@@ -1,20 +1,47 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight, CalendarDays, List, Flame, Sparkles, PenLine, Settings } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  CalendarDays,
+  List,
+  Flame,
+  Sparkles,
+  PenLine,
+  Settings,
+  BookOpen,
+} from "lucide-react";
 import CalendarGrid from "../components/Calendar/CalendarGrid";
 import TimelineView from "../components/Calendar/TimelineView";
 import RecentEntriesStrip from "../components/Calendar/RecentEntriesStrip";
 import StatChip from "../components/Calendar/StatChip";
-import { useDiary } from "../context/useDiary";
-import { MONTH_LABEL_FORMAT, todayString } from "../utils/date";
-import { computeStreak, countThisMonth } from "../utils/stats";
+import ErrorBox from "../components/common/ErrorBox";
+import Skeleton from "../components/common/Skeleton";
+import { useCurrentChild } from "../auth/authContext";
+import { useDiaries } from "../hooks/useDiaries";
+import { errorMessage } from "../api";
+import { MONTH_LABEL_FORMAT, addDays, buildMonthGrid, todayString } from "../utils/date";
+import { computeStreak, countThisMonth, toEntriesByDate } from "../utils/stats";
 import { mascot } from "../mock/illustrations";
+
+// 연속 기록·이번 달 통계와 최근 기록은 최근 62일 기록으로 계산한다.
+const RECENT_WINDOW_DAYS = 62;
+
+function CalendarSkeleton() {
+  return (
+    <div className="grid grid-cols-7 gap-1.5 sm:gap-2" aria-label="기록을 불러오는 중" role="status">
+      {Array.from({ length: 35 }, (_, i) => (
+        <Skeleton key={i} className="aspect-square" />
+      ))}
+    </div>
+  );
+}
 
 type ViewMode = "calendar" | "timeline";
 
 export default function AppHome() {
   const navigate = useNavigate();
-  const { entriesByDate } = useDiary();
+  const child = useCurrentChild();
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
@@ -38,10 +65,22 @@ export default function AppHome() {
     }
   };
 
+  // 캘린더는 앞뒤 달 칸까지 보여주므로 그리드 전체 범위를 조회한다.
+  const grid = buildMonthGrid(viewYear, viewMonth);
+  const monthQuery = useDiaries(child.id, grid[0].dateStr, grid[grid.length - 1].dateStr);
+  const todayStr = todayString();
+  const recentQuery = useDiaries(child.id, addDays(todayStr, -(RECENT_WINDOW_DAYS - 1)), todayStr);
+
+  const monthEntriesByDate = toEntriesByDate(monthQuery.data);
+  const recentEntriesByDate = toEntriesByDate(recentQuery.data);
   const monthLabel = MONTH_LABEL_FORMAT.format(new Date(viewYear, viewMonth, 1));
-  const streak = computeStreak(entriesByDate);
-  const monthCount = countThisMonth(entriesByDate);
-  const hasEntries = entriesByDate.size > 0;
+  const streak = computeStreak(recentEntriesByDate);
+  const monthCount = countThisMonth(recentEntriesByDate);
+  const hasEntries = recentEntriesByDate.size > 0;
+  const isEmpty = recentQuery.isSuccess && monthQuery.isSuccess && !hasEntries && monthEntriesByDate.size === 0;
+  const monthEntriesInView = (monthQuery.data ?? []).filter((e) =>
+    e.date.startsWith(`${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`),
+  );
 
   return (
     <div className="min-h-screen bg-ivory">
@@ -52,8 +91,15 @@ export default function AppHome() {
         </Link>
         <div className="flex items-center gap-1">
           <Link
+            to="/storybooks"
+            className="flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-medium text-brown/70 transition-colors hover:bg-mint-light hover:text-brown"
+          >
+            <BookOpen size={18} aria-hidden />
+            동화 서재
+          </Link>
+          <Link
             to="/intro"
-            className="rounded-full px-3 py-1.5 text-sm font-medium text-brown/60 transition-colors hover:bg-mint-light hover:text-brown"
+            className="hidden min-h-11 items-center rounded-full px-3 text-sm font-medium text-brown/60 transition-colors hover:bg-mint-light hover:text-brown sm:flex"
           >
             서비스 소개
           </Link>
@@ -76,8 +122,12 @@ export default function AppHome() {
                 alt="인사하는 하루"
                 className="animate-mascot-bob mx-auto h-24 w-24 sm:h-28 sm:w-28"
               />
-              <h1 className="mt-2 font-story text-2xl text-brown sm:text-3xl">우리 아이의 하루</h1>
-              <p className="mt-1.5 text-sm text-brown/60">작은 순간들이 모여 소중한 이야기가 돼요.</p>
+              <h1 className="mt-2 font-story text-2xl text-brown sm:text-3xl">{child.name}의 하루</h1>
+              <p className="mt-1.5 text-sm text-brown/60">
+                {isEmpty
+                  ? "첫 기록을 남겨볼까요? 사진 한 장, 한 줄이면 충분해요."
+                  : "작은 순간들이 모여 소중한 이야기가 돼요."}
+              </p>
 
               <div className="mt-5 flex flex-col items-center justify-center gap-2.5 sm:flex-row">
                 <button
@@ -98,22 +148,37 @@ export default function AppHome() {
                 </button>
               </div>
 
-              <div className="mt-5 flex flex-wrap justify-center gap-2.5">
-                <StatChip icon={Flame} label="연속 기록" value={`${streak}일째`} colorClass="bg-coral" />
-                <StatChip
-                  icon={CalendarDays}
-                  label="이번 달 기록"
-                  value={`${monthCount}개`}
-                  colorClass="bg-mint-deep"
+              {recentQuery.isPending ? (
+                <div className="mt-5 flex justify-center gap-2.5" role="status" aria-label="통계를 불러오는 중">
+                  <Skeleton className="h-12 w-32 rounded-full" />
+                  <Skeleton className="h-12 w-32 rounded-full" />
+                </div>
+              ) : recentQuery.isError ? (
+                <ErrorBox
+                  className="mt-5"
+                  message={`최근 기록을 불러오지 못했어요. ${errorMessage(recentQuery.error)}`}
+                  onRetry={() => void recentQuery.refetch()}
                 />
-              </div>
+              ) : (
+                !isEmpty && (
+                  <div className="mt-5 flex flex-wrap justify-center gap-2.5">
+                    <StatChip icon={Flame} label="연속 기록" value={`${streak}일째`} colorClass="bg-coral" />
+                    <StatChip
+                      icon={CalendarDays}
+                      label="이번 달 기록"
+                      value={`${monthCount}개`}
+                      colorClass="bg-mint-deep"
+                    />
+                  </div>
+                )
+              )}
 
               {hasEntries && (
                 <div className="mt-6 text-left">
                   <p className="mb-2 text-center text-xs text-brown/50">최근 기록</p>
                   <div className="flex justify-center">
                     <RecentEntriesStrip
-                      entries={Array.from(entriesByDate.values())}
+                      entries={recentQuery.data ?? []}
                       onSelect={(dateStr) => navigate(`/diary/${dateStr}`)}
                       limit={3}
                     />
@@ -127,7 +192,7 @@ export default function AppHome() {
                 type="button"
                 onClick={() => setViewMode("calendar")}
                 className={[
-                  "flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                  "flex min-h-11 items-center gap-1.5 rounded-full px-4 text-sm font-medium transition-colors",
                   viewMode === "calendar"
                     ? "bg-coral text-white"
                     : "bg-white/70 text-brown/60 hover:bg-mint-light",
@@ -140,7 +205,7 @@ export default function AppHome() {
                 type="button"
                 onClick={() => setViewMode("timeline")}
                 className={[
-                  "flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                  "flex min-h-11 items-center gap-1.5 rounded-full px-4 text-sm font-medium transition-colors",
                   viewMode === "timeline"
                     ? "bg-coral text-white"
                     : "bg-white/70 text-brown/60 hover:bg-mint-light",
@@ -159,7 +224,7 @@ export default function AppHome() {
                       type="button"
                       onClick={goPrevMonth}
                       aria-label="이전 달"
-                      className="rounded-full p-2 text-brown/60 hover:bg-mint-light"
+                      className="flex h-11 w-11 items-center justify-center rounded-full text-brown/60 hover:bg-mint-light"
                     >
                       <ChevronLeft size={20} />
                     </button>
@@ -168,24 +233,68 @@ export default function AppHome() {
                       type="button"
                       onClick={goNextMonth}
                       aria-label="다음 달"
-                      className="rounded-full p-2 text-brown/60 hover:bg-mint-light"
+                      className="flex h-11 w-11 items-center justify-center rounded-full text-brown/60 hover:bg-mint-light"
                     >
                       <ChevronRight size={20} />
                     </button>
                   </div>
 
-                  <CalendarGrid
-                    year={viewYear}
-                    month={viewMonth}
-                    entriesByDate={entriesByDate}
-                    onDayClick={(dateStr) => navigate(`/diary/${dateStr}`)}
+                  {monthQuery.isPending ? (
+                    <CalendarSkeleton />
+                  ) : monthQuery.isError ? (
+                    <ErrorBox
+                      message={`이 달의 기록을 불러오지 못했어요. ${errorMessage(monthQuery.error)}`}
+                      onRetry={() => void monthQuery.refetch()}
+                    />
+                  ) : (
+                    <div className={monthQuery.isPlaceholderData ? "opacity-60 transition-opacity" : ""}>
+                      <CalendarGrid
+                        year={viewYear}
+                        month={viewMonth}
+                        entriesByDate={monthEntriesByDate}
+                        onDayClick={(dateStr) => navigate(`/diary/${dateStr}`)}
+                        disableFuture
+                      />
+                    </div>
+                  )}
+                </>
+              ) : monthQuery.isError ? (
+                <ErrorBox
+                  message={`이 달의 기록을 불러오지 못했어요. ${errorMessage(monthQuery.error)}`}
+                  onRetry={() => void monthQuery.refetch()}
+                />
+              ) : monthQuery.isPending ? (
+                <div className="space-y-3" role="status" aria-label="기록을 불러오는 중">
+                  {Array.from({ length: 3 }, (_, i) => (
+                    <Skeleton key={i} className="h-[88px]" />
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <div className="mb-4 flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={goPrevMonth}
+                      aria-label="이전 달"
+                      className="flex h-11 w-11 items-center justify-center rounded-full text-brown/60 hover:bg-mint-light"
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    <h2 className="font-story text-lg text-brown">{monthLabel}</h2>
+                    <button
+                      type="button"
+                      onClick={goNextMonth}
+                      aria-label="다음 달"
+                      className="flex h-11 w-11 items-center justify-center rounded-full text-brown/60 hover:bg-mint-light"
+                    >
+                      <ChevronRight size={20} />
+                    </button>
+                  </div>
+                  <TimelineView
+                    entries={monthEntriesInView}
+                    onSelect={(dateStr) => navigate(`/diary/${dateStr}`)}
                   />
                 </>
-              ) : (
-                <TimelineView
-                  entries={Array.from(entriesByDate.values())}
-                  onSelect={(dateStr) => navigate(`/diary/${dateStr}`)}
-                />
               )}
             </div>
 
