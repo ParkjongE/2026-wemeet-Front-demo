@@ -22,14 +22,14 @@ import { useDiaries } from "../hooks/useDiaries";
 import { errorMessage } from "../api";
 import { MONTH_LABEL_FORMAT, addDays, buildMonthGrid, todayString } from "../utils/date";
 import { computeStreak, countThisMonth, toEntriesByDate } from "../utils/stats";
-import { mascot } from "../mock/illustrations";
+import { mascot } from "../assets/illustrations";
 
 // 연속 기록·이번 달 통계와 최근 기록은 최근 62일 기록으로 계산한다.
 const RECENT_WINDOW_DAYS = 62;
 
 function CalendarSkeleton() {
   return (
-    <div className="grid grid-cols-7 gap-1.5 sm:gap-2" aria-label="기록을 불러오는 중" role="status">
+    <div className="grid grid-cols-7 gap-0.5 sm:gap-2" aria-label="기록을 불러오는 중" role="status">
       {Array.from({ length: 35 }, (_, i) => (
         <Skeleton key={i} className="aspect-square" />
       ))}
@@ -85,7 +85,7 @@ export default function AppHome() {
   return (
     <div className="min-h-screen bg-ivory">
       <header className="flex items-center justify-between px-4 py-4 sm:px-6">
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex min-h-11 items-center gap-2">
           <img src={mascot.wave} alt="" className="h-8 w-8" />
           <span className="font-story text-base text-brown">하루동화</span>
         </Link>
@@ -216,7 +216,7 @@ export default function AppHome() {
               </button>
             </div>
 
-            <div className="rounded-2xl bg-white/70 p-4 shadow-sm sm:p-6">
+            <div className="rounded-2xl bg-white/70 p-2 shadow-sm sm:p-6">
               {viewMode === "calendar" ? (
                 <>
                   <div className="mb-4 flex items-center justify-between">

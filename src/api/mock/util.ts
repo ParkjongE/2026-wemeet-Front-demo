@@ -1,5 +1,5 @@
 import { ApiError, getToken } from "../client";
-import { genericDiaryScenes } from "../../mock/illustrations";
+import { genericDiaryScenes } from "../../assets/illustrations";
 import type { DiaryEntry } from "../../types";
 import { loadDb, type MockChild, type MockDb, type MockDiary, type MockUser } from "./db";
 

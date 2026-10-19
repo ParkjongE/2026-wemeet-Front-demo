@@ -32,7 +32,7 @@ export default function CalendarGrid({
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+      <div className="grid grid-cols-7 gap-0.5 sm:gap-2">
         {cells.map((cell) => {
           const entry = entriesByDate.get(cell.dateStr);
           const hasPhoto = !!entry?.photos[0];

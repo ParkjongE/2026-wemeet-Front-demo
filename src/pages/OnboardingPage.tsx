@@ -5,7 +5,7 @@ import AuthLayout from "../components/Auth/AuthLayout";
 import Button from "../components/common/Button";
 import TextField from "../components/common/TextField";
 import { useCreateChild } from "../hooks/useAccount";
-import { mascot } from "../mock/illustrations";
+import { mascot } from "../assets/illustrations";
 import { todayString } from "../utils/date";
 
 export default function OnboardingPage() {

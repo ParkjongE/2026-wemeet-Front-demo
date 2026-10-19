@@ -7,7 +7,7 @@ import ErrorBox from "../components/common/ErrorBox";
 import Skeleton from "../components/common/Skeleton";
 import StatusBadge from "../components/Storybook/StatusBadge";
 import { useStorybooks } from "../hooks/useStorybooks";
-import { mascot } from "../mock/illustrations";
+import { mascot } from "../assets/illustrations";
 import type { StorybookSummary } from "../types";
 import { formatPeriod } from "../utils/date";
 

@@ -1,5 +1,5 @@
 import type { StorybookPage } from "../types";
-import { shovelStoryScenes, genericDiaryScenes } from "./illustrations";
+import { shovelStoryScenes, genericDiaryScenes } from "../assets/illustrations";
 
 export { LESSON_TAGS } from "../constants/storybook";
 

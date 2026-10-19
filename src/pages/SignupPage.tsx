@@ -3,7 +3,7 @@ import { errorMessage } from "../api";
 import AuthLayout from "../components/Auth/AuthLayout";
 import CredentialsForm from "../components/Auth/CredentialsForm";
 import { useSignup } from "../hooks/useAccount";
-import { mascot } from "../mock/illustrations";
+import { mascot } from "../assets/illustrations";
 
 export default function SignupPage() {
   const signup = useSignup();

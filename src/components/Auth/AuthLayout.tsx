@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { mascot } from "../../mock/illustrations";
+import { mascot } from "../../assets/illustrations";
 
 interface AuthLayoutProps {
   title: string;

@@ -11,20 +11,20 @@ export default function AppHeader({ title, backTo = "/" }: AppHeaderProps) {
 
   return (
     <div className="mb-4 flex items-center justify-between">
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 items-center gap-2">
         <button
           type="button"
           onClick={() => navigate(backTo)}
           aria-label="이전 화면으로 돌아가기"
-          className="rounded-full p-2 text-brown/60 hover:bg-mint-light"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-brown/60 hover:bg-mint-light"
         >
           <ArrowLeft size={20} />
         </button>
-        <h1 className="font-story text-lg text-brown">{title}</h1>
+        <h1 className="truncate font-story text-lg text-brown">{title}</h1>
       </div>
       <Link
         to="/intro"
-        className="rounded-full px-3 py-1.5 text-xs font-medium text-brown/50 transition-colors hover:bg-mint-light hover:text-brown sm:text-sm"
+        className="flex min-h-11 shrink-0 items-center rounded-full px-3 text-xs font-medium text-brown/50 transition-colors hover:bg-mint-light hover:text-brown sm:text-sm"
       >
         서비스 소개
       </Link>

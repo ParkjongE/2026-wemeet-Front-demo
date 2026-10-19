@@ -1,5 +1,5 @@
 import type { DiaryEntry } from "../types";
-import { genericDiaryScenes } from "./illustrations";
+import { genericDiaryScenes } from "../assets/illustrations";
 
 function formatDate(d: Date): string {
   const y = d.getFullYear();

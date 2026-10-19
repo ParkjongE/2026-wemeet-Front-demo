@@ -1,4 +1,4 @@
-import { mascot } from "../../mock/illustrations";
+import { mascot } from "../../assets/illustrations";
 import ErrorBox from "./ErrorBox";
 
 interface FullPageStatusProps {

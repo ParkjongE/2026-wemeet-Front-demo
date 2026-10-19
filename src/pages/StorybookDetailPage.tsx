@@ -13,7 +13,7 @@ import StatusBadge from "../components/Storybook/StatusBadge";
 import StorybookViewer from "../components/StorybookViewer/StorybookViewer";
 import { useDiaries } from "../hooks/useDiaries";
 import { useDeleteStorybook, useRetryStorybook, useStorybook } from "../hooks/useStorybooks";
-import { mascot } from "../mock/illustrations";
+import { mascot } from "../assets/illustrations";
 import type { Storybook } from "../types";
 import { formatPeriod } from "../utils/date";
 import type { StorybookDraft } from "./StorybookNewPage";

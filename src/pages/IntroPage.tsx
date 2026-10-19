@@ -7,13 +7,18 @@ import CalendarGrid from "../components/Calendar/CalendarGrid";
 import StorybookViewer from "../components/StorybookViewer/StorybookViewer";
 import { exampleDiaryEntries } from "../mock/diaryEntries";
 import { toEntriesByDate } from "../utils/stats";
-import { hero, mascot, genericDiaryScenes, pointIcons } from "../mock/illustrations";
-import { SAMPLE_STORYBOOK, LESSON_TAGS } from "../mock/storybook";
+import { hero, mascot, genericDiaryScenes, pointIcons } from "../assets/illustrations";
+import { SAMPLE_STORYBOOK } from "../mock/storybook";
+import { USE_MOCK } from "../api";
+import { useAuth } from "../auth/authContext";
+import { LESSON_TAGS, PARENT_MESSAGE_EXAMPLES } from "../constants/storybook";
 
 export default function IntroPage() {
   const entriesByDate = toEntriesByDate(exampleDiaryEntries);
   const today = new Date();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const isSignedIn = useAuth().status === "authenticated";
+  const ctaTo = isSignedIn ? "/" : "/signup";
 
   return (
     <div className="min-h-screen bg-ivory">
@@ -35,10 +40,10 @@ export default function IntroPage() {
             </p>
             <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row lg:justify-start">
               <Link
-                to="/"
+                to={ctaTo}
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-coral px-7 py-3 font-story text-white shadow-md transition-transform hover:scale-105 sm:w-auto"
               >
-                하루 기록 시작하기
+                {isSignedIn ? "내 기록 보러 가기" : "하루 기록 시작하기"}
                 <ArrowRight size={18} />
               </Link>
               <a
@@ -48,9 +53,11 @@ export default function IntroPage() {
                 그림동화 미리보기
               </a>
             </div>
-            <p className="mt-3 text-xs text-brown/50">
-              지금은 준비된 기록과 동화로 체험할 수 있어요.
-            </p>
+            {USE_MOCK && (
+              <p className="mt-3 text-xs text-brown/50">
+                지금은 준비된 기록과 동화로 체험할 수 있어요.
+              </p>
+            )}
           </div>
 
           <div className="order-1 lg:order-2">
@@ -157,31 +164,30 @@ export default function IntroPage() {
           <div className="text-center">
             <p className="text-xs font-semibold text-coral-deep">02 · AI 그림동화</p>
             <h2 className="mt-2 font-story text-2xl text-brown sm:text-3xl">
-              우리 아이의 경험에,
+              부모님이 전하고 싶은 메시지가,
               <br />
-              전하고 싶은 마음을 더해요.
+              동화의 중심이 돼요.
             </h2>
             <p className="mx-auto mt-4 max-w-lg whitespace-pre-line text-sm leading-relaxed text-brown/70">
-              {"추억을 고르고 나눔, 용기, 배려처럼 전하고 싶은 마음을 선택하세요.\nAI가 기록 속 경험을 이야기 소재로 연결하고,\n장면에 어울리는 삽화를 더해 아이만의 그림동화를 구성합니다."}
+              {"아이에게 꼭 건네고 싶은 한마디를 자유롭게 적어 주세요.\nAI가 그 메시지를 이야기의 중심에 두고, 기록 속 경험을 소재로 엮어\n장면에 어울리는 삽화와 함께 아이만의 그림동화를 구성합니다."}
             </p>
           </div>
 
           <div className="mt-10 grid gap-5 sm:grid-cols-3">
             <div className="rounded-2xl border border-hairline bg-white p-6 text-center">
+              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-coral-deep text-white">
+                <Sparkles size={22} />
+              </span>
+              <h3 className="mt-4 font-story text-base text-brown">부모가 전하고 싶은 메시지</h3>
+              <p className="mt-1.5 text-sm text-brown/60">자유롭게 적는 한마디가 이야기의 중심</p>
+              <p className="mt-1 text-xs text-brown/40">교훈 태그(선택) · {LESSON_TAGS.join(" · ")}</p>
+            </div>
+            <div className="rounded-2xl border border-hairline bg-white p-6 text-center">
               <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-mint-deep text-white">
                 <ImageIcon size={22} />
               </span>
               <h3 className="mt-4 font-story text-base text-brown">우리 아이의 추억</h3>
-              <p className="mt-1.5 text-sm text-brown/60">직접 남긴 사진과 짧은 일화</p>
-            </div>
-            <div className="rounded-2xl border border-hairline bg-white p-6 text-center">
-              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-coral-deep text-white">
-                <Sparkles size={22} />
-              </span>
-              <h3 className="mt-4 font-story text-base text-brown">부모가 전하고 싶은 마음</h3>
-              <p className="mt-1.5 text-sm text-brown/60">
-                {LESSON_TAGS.join(" · ")}
-              </p>
+              <p className="mt-1.5 text-sm text-brown/60">직접 남긴 사진과 짧은 일화가 이야기 소재로</p>
             </div>
             <div className="rounded-2xl border border-hairline bg-white p-6 text-center">
               <img src={mascot.write} alt="" className="mx-auto h-12 w-12" />
@@ -192,10 +198,10 @@ export default function IntroPage() {
 
           <div className="mx-auto mt-10 max-w-md rounded-2xl bg-yellow-light p-5 text-sm text-brown">
             <p>
-              <strong className="font-semibold">기록</strong> · 친구에게 노란 삽을 빌려준 날
+              <strong className="font-semibold">전하고 싶은 메시지</strong> · “{PARENT_MESSAGE_EXAMPLES[1]}”
             </p>
             <p className="mt-1">
-              <strong className="font-semibold">선택한 마음</strong> · 나눔
+              <strong className="font-semibold">기록</strong> · 친구에게 노란 삽을 빌려준 날
             </p>
             <p className="mt-1">
               <strong className="font-semibold">동화</strong> · 친구와 함께 꽃씨를 심으며 나누는
@@ -203,9 +209,11 @@ export default function IntroPage() {
             </p>
           </div>
 
-          <p className="mt-6 text-center text-xs text-brown/50">
-            현재 체험에서는 AI 생성 과정을 준비된 예시로 보여드려요.
-          </p>
+          {USE_MOCK && (
+            <p className="mt-6 text-center text-xs text-brown/50">
+              미리 준비된 예시로 체험하는 AI 그림동화입니다.
+            </p>
+          )}
         </div>
       </section>
 
@@ -224,7 +232,7 @@ export default function IntroPage() {
           <div className="mt-4">
             <p className="font-story text-lg text-coral-deep">{SAMPLE_STORYBOOK.title}</p>
             <p className="mt-1 text-sm text-brown/60">
-              전하고 싶은 마음: {SAMPLE_STORYBOOK.lessonTag} · 체험용 그림동화 · {SAMPLE_STORYBOOK.pages.length}페이지
+              교훈 태그: {SAMPLE_STORYBOOK.lessonTag} · 예시 그림동화 · {SAMPLE_STORYBOOK.pages.length}페이지
             </p>
           </div>
         </div>
@@ -318,7 +326,7 @@ export default function IntroPage() {
         </h2>
         <p className="mt-2 text-sm text-white/90">잊고 싶지 않은 우리 아이의 하루를 남겨보세요.</p>
         <Link
-          to="/"
+          to={ctaTo}
           className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3 font-story text-coral-deep shadow-md transition-transform hover:scale-105"
         >
           첫 기록 남기러 가기
@@ -330,7 +338,7 @@ export default function IntroPage() {
         <div className="mx-auto max-w-6xl px-4 py-8 text-center text-xs text-brown/50 sm:px-6">
           <p className="font-story mb-1 text-sm text-brown/70">하루동화</p>
           <p>우리 아이의 하루가, 한 권의 동화로.</p>
-          <p className="mt-1">프론트엔드 체험 버전</p>
+          {USE_MOCK && <p className="mt-1">체험 버전</p>}
         </div>
       </footer>
     </div>
@@ -344,7 +352,7 @@ const FAQS = [
   },
   {
     q: "AI는 무엇을 만들어주나요?",
-    a: "서비스는 기록 속 일화와 선택한 마음을 바탕으로 이야기와 장면별 삽화를 구성하는 것을 목표로 해요. 현재 체험 버전에서는 미리 준비된 동화로 흐름을 확인할 수 있어요.",
+    a: "부모님이 적은 메시지를 중심에 두고, 기록 속 일화를 엮어 이야기와 장면별 삽화를 구성해요. 요청하면 몇 분 안에 완성되고, 서재에서 확인할 수 있어요.",
   },
   {
     q: "아이의 사진이 그대로 동화 캐릭터가 되나요?",
@@ -352,10 +360,12 @@ const FAQS = [
   },
   {
     q: "기록이 얼마나 있어야 하나요?",
-    a: "체험에서는 선택한 기간에 기록이 하나 이상 있으면 시작할 수 있어요. 여러 기록을 선택하며 동화 만들기 흐름을 살펴보세요.",
+    a: "고른 기간(최대 31일)에 기록이 하나 이상 있으면 만들 수 있어요. 기록이 많을수록 이야기 소재가 풍부해져요.",
   },
   {
     q: "지금 올린 사진과 기록은 저장되나요?",
-    a: "현재 데모에서는 서버에 업로드하지 않고, 열린 화면에서만 임시로 사용해요. 새로고침하면 추가한 기록이 사라져요.",
+    a: USE_MOCK
+      ? "지금 체험 버전에서는 서버에 올리지 않고 이 브라우저에만 저장해요. 브라우저 데이터를 지우면 함께 사라져요."
+      : "로그인한 계정에 안전하게 저장돼요. 기록과 동화는 언제든 수정하거나 삭제할 수 있어요.",
   },
 ];

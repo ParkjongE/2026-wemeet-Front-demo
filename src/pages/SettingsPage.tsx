@@ -5,6 +5,7 @@ import { useAuth, useCurrentChild } from "../auth/authContext";
 import AppHeader from "../components/AppHeader";
 import Button from "../components/common/Button";
 import TextField from "../components/common/TextField";
+import { useToast } from "../components/common/toastContext";
 import { useUpdateChild } from "../hooks/useAccount";
 import { todayString } from "../utils/date";
 
@@ -12,6 +13,7 @@ export default function SettingsPage() {
   const { user, signOut } = useAuth();
   const child = useCurrentChild();
   const updateChild = useUpdateChild(child.id);
+  const toast = useToast();
   const [name, setName] = useState(child.name);
   const [birthDate, setBirthDate] = useState(child.birthDate ?? "");
 
@@ -22,7 +24,10 @@ export default function SettingsPage() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (nameError || !dirty) return;
-    updateChild.mutate({ name: trimmed, birthDate: birthDate || null });
+    updateChild.mutate(
+      { name: trimmed, birthDate: birthDate || null },
+      { onSuccess: () => toast.show("아이 프로필을 저장했어요.") },
+    );
   };
 
   return (
@@ -47,14 +52,9 @@ export default function SettingsPage() {
             value={birthDate}
             onChange={(e) => setBirthDate(e.target.value)}
           />
-          {updateChild.isError && (
+          {updateChild.isError && dirty && (
             <p role="alert" className="text-sm text-coral-deep">
               {errorMessage(updateChild.error)}
-            </p>
-          )}
-          {updateChild.isSuccess && !dirty && (
-            <p role="status" className="text-sm text-mint-deep">
-              저장했어요.
             </p>
           )}
           <Button type="submit" loading={updateChild.isPending} disabled={!dirty || !!nameError}>
