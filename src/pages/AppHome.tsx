@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight, CalendarDays, List, Flame, Sparkles, PenLine } from "lucide-react";
+import { ChevronLeft, ChevronRight, CalendarDays, List, Flame, Sparkles, PenLine, Settings } from "lucide-react";
 import CalendarGrid from "../components/Calendar/CalendarGrid";
 import TimelineView from "../components/Calendar/TimelineView";
 import RecentEntriesStrip from "../components/Calendar/RecentEntriesStrip";
@@ -50,12 +50,21 @@ export default function AppHome() {
           <img src={mascot.wave} alt="" className="h-8 w-8" />
           <span className="font-story text-base text-brown">하루동화</span>
         </Link>
-        <Link
-          to="/intro"
-          className="rounded-full px-3 py-1.5 text-sm font-medium text-brown/60 transition-colors hover:bg-mint-light hover:text-brown"
-        >
-          서비스 소개
-        </Link>
+        <div className="flex items-center gap-1">
+          <Link
+            to="/intro"
+            className="rounded-full px-3 py-1.5 text-sm font-medium text-brown/60 transition-colors hover:bg-mint-light hover:text-brown"
+          >
+            서비스 소개
+          </Link>
+          <Link
+            to="/settings"
+            aria-label="설정"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-brown/60 transition-colors hover:bg-mint-light hover:text-brown"
+          >
+            <Settings size={20} />
+          </Link>
+        </div>
       </header>
 
       <div className="mx-auto max-w-6xl px-4 pb-10 sm:px-6">
@@ -81,7 +90,7 @@ export default function AppHome() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigate("/storybook")}
+                  onClick={() => navigate("/storybooks/new")}
                   className="flex w-full items-center justify-center gap-2 rounded-full bg-mint px-6 py-3 font-story text-brown shadow-sm transition-transform hover:scale-105 sm:w-auto"
                 >
                   <Sparkles size={18} />
@@ -192,7 +201,7 @@ export default function AppHome() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => navigate("/storybook")}
+                  onClick={() => navigate("/storybooks/new")}
                   className="flex shrink-0 items-center gap-2 rounded-full bg-coral px-6 py-3 font-story text-white shadow-sm transition-transform hover:scale-105"
                 >
                   <Sparkles size={18} />
