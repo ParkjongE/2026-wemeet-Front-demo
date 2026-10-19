@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { Storybook } from "../../types";
+import type { LegacyStorybook as Storybook } from "../../types/legacy";
 
 interface StorybookViewerProps {
   storybook: Storybook;

@@ -1,5 +1,5 @@
 import { NotebookPen } from "lucide-react";
-import type { DiaryEntry } from "../../types";
+import type { LegacyDiaryEntry as DiaryEntry } from "../../types/legacy";
 
 interface RecentEntriesStripProps {
   entries: DiaryEntry[];

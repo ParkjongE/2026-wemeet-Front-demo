@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { diaryEntries as initialEntries } from "../mock/diaryEntries";
-import type { DiaryEntry } from "../types";
+import type { LegacyDiaryEntry as DiaryEntry } from "../types/legacy";
 import { DiaryContext } from "./diaryContextStore";
 
 export function DiaryProvider({ children }: { children: ReactNode }) {

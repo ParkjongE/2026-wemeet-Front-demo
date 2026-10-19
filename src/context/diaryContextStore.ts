@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type { DiaryEntry } from "../types";
+import type { LegacyDiaryEntry as DiaryEntry } from "../types/legacy";
 
 export interface DiaryContextValue {
   entriesByDate: Map<string, DiaryEntry>;

@@ -1,4 +1,4 @@
-import type { DiaryEntry } from "../types";
+import type { LegacyDiaryEntry as DiaryEntry } from "../types/legacy";
 import { genericDiaryScenes } from "./illustrations";
 
 function formatDate(d: Date): string {
@@ -14,7 +14,7 @@ function daysAgo(n: number): string {
   return formatDate(d);
 }
 
-interface SeedEntry {
+export interface SeedEntry {
   offset: number;
   text: string;
   moodTag?: string;
@@ -22,7 +22,7 @@ interface SeedEntry {
   textOnly?: boolean;
 }
 
-const seedEntries: SeedEntry[] = [
+export const seedEntries: SeedEntry[] = [
   {
     offset: 0,
     text: "아침에 일어나자마자 창밖에 무지개가 떴다며 손가락으로 가리켰어요. 오늘 하루도 신나는 일이 가득했으면.",

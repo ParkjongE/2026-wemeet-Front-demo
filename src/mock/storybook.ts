@@ -1,4 +1,4 @@
-import type { Storybook } from "../types";
+import type { LegacyStorybook as Storybook } from "../types/legacy";
 import { shovelStoryScenes, genericDiaryScenes } from "./illustrations";
 
 export const LESSON_TAGS = ["나눔", "용기", "정직", "배려", "끈기"] as const;
@@ -89,6 +89,24 @@ const LESSON_TEMPLATES: Record<string, LessonTemplate> = {
   끈기: PERSEVERANCE_TEMPLATE,
 };
 
+export interface StoryContent {
+  title: string;
+  pages: { text: string; imageUrl: string }[];
+}
+
+// 교훈 태그와 주인공 이름으로 동화 제목·페이지를 만든다. 목업 API와 소개 페이지에서 쓴다.
+export function buildStoryContent(lesson: string | null, protagonistName: string): StoryContent {
+  const name = protagonistName.trim() || "우리 아이";
+  const template = (lesson && LESSON_TEMPLATES[lesson]) || CUSTOM_TEMPLATE;
+  return {
+    title: template.title(name),
+    pages: template.pages(name).map((text, i) => ({
+      text,
+      imageUrl: template.images[i % template.images.length],
+    })),
+  };
+}
+
 export function generateDummyStorybook(
   lesson: string,
   periodStart: string,
@@ -96,21 +114,17 @@ export function generateDummyStorybook(
   protagonistName: string,
 ): Storybook {
   const name = protagonistName.trim() || "우리 아이";
-  const template = LESSON_TEMPLATES[lesson] ?? CUSTOM_TEMPLATE;
-  const pageTexts = template.pages(name);
+  const content = buildStoryContent(lesson, name);
 
   return {
     id: `storybook-${Date.now()}`,
-    title: template.title(name),
+    title: content.title,
     lesson,
     protagonistName: name,
     periodStart,
     periodEnd,
     createdAt: new Date().toISOString(),
-    pages: pageTexts.map((text, i) => ({
-      text,
-      imageUrl: template.images[i % template.images.length],
-    })),
+    pages: content.pages,
   };
 }
 

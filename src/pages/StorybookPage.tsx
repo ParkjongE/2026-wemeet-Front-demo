@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Wand2, RotateCcw, CalendarDays, NotebookPen } from "lucide-react";
 import { LESSON_TAGS, generateDummyStorybook } from "../mock/storybook";
-import type { Storybook } from "../types";
+import type { LegacyStorybook as Storybook } from "../types/legacy";
 import { addDays, todayString } from "../utils/date";
 import { useDiary } from "../context/useDiary";
 import StorybookViewer from "../components/StorybookViewer/StorybookViewer";

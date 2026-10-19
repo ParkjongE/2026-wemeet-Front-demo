@@ -13,6 +13,6 @@ export const WEATHER_OPTIONS: {
   { value: "snowy", label: "눈", icon: Snowflake, colorClass: "text-sky-300" },
 ];
 
-export function getWeatherOption(weather?: Weather) {
+export function getWeatherOption(weather?: Weather | null) {
   return WEATHER_OPTIONS.find((w) => w.value === weather);
 }

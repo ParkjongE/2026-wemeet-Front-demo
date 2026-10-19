@@ -1,4 +1,4 @@
-import type { DiaryEntry } from "../types";
+import type { LegacyDiaryEntry as DiaryEntry } from "../types/legacy";
 import { addDays, todayString } from "./date";
 
 export function computeStreak(entriesByDate: Map<string, DiaryEntry>): number {
