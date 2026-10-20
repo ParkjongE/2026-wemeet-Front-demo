@@ -12,7 +12,7 @@ export default function TextField({ label, hint, error, className = "", ...input
 
   return (
     <div className={className}>
-      <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-brown">
+      <label htmlFor={id} className="mb-2 block text-sm font-semibold text-brown">
         {label}
       </label>
       <input
@@ -20,15 +20,15 @@ export default function TextField({ label, hint, error, className = "", ...input
         aria-invalid={!!error}
         aria-describedby={describedBy}
         className={[
-          "min-h-12 w-full rounded-xl border bg-white px-4 text-base text-brown outline-none transition-colors placeholder:text-brown/30 focus:ring-2",
+          "min-h-13 w-full rounded-2xl border bg-white px-4 text-base text-brown outline-none transition-colors placeholder:text-brown/30 focus:ring-4",
           error
-            ? "border-coral-deep focus:ring-coral/40"
-            : "border-hairline focus:border-mint-deep focus:ring-mint/50",
+            ? "border-error focus:ring-error/15"
+            : "border-hairline focus:border-ocean focus:ring-ocean/15",
         ].join(" ")}
         {...inputProps}
       />
       {error ? (
-        <p id={`${id}-error`} className="mt-1.5 text-xs text-coral-deep">
+        <p id={`${id}-error`} className="mt-1.5 text-xs text-error">
           {error}
         </p>
       ) : (

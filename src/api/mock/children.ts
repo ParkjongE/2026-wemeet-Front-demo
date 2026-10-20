@@ -3,7 +3,12 @@ import type { Child } from "../../types";
 import { loadDb, newId, saveDb, type MockChild } from "./db";
 import { fail, requireChild, requireUser, simulateNetwork } from "./util";
 
-const toChild = ({ id, name, birthDate }: MockChild): Child => ({ id, name, birthDate });
+const toChild = ({ id, name, birthDate, gender }: MockChild): Child => ({
+  id,
+  name,
+  birthDate,
+  gender: gender ?? null,
+});
 
 function validateName(name: string) {
   const trimmed = name.trim();
@@ -26,6 +31,7 @@ export const mockChildrenApi: ChildrenApi = {
       userId: user.id,
       name: validateName(input.name),
       birthDate: input.birthDate || null,
+      gender: input.gender ?? null,
     };
     db.children.push(child);
     saveDb(db);
@@ -38,6 +44,7 @@ export const mockChildrenApi: ChildrenApi = {
     const child = requireChild(childId, db);
     if (input.name !== undefined) child.name = validateName(input.name);
     if (input.birthDate !== undefined) child.birthDate = input.birthDate || null;
+    if (input.gender !== undefined) child.gender = input.gender ?? null;
     saveDb(db);
     return toChild(child);
   },

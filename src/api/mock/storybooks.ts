@@ -1,7 +1,7 @@
 import type { StorybooksApi } from "../storybooks";
 import type { Storybook, StorybookStatus, StorybookSummary } from "../../types";
 import { STORY_PERIOD_MAX_DAYS } from "../../constants/storybook";
-import { buildStoryContent } from "../../mock/storybook";
+import { buildStory, pickStorySlug } from "../../mock/stories";
 import { daysBetweenInclusive, todayString } from "../../utils/date";
 import { loadDb, newId, nowIso, saveDb, type MockDb, type MockStorybook } from "./db";
 import { clone, fail, requireChild, requireUser, simulateNetwork } from "./util";
@@ -23,11 +23,14 @@ function finishedAt(book: MockStorybook): string {
   return new Date(new Date(book.startedAt).getTime() + FINISHED_AFTER_MS).toISOString();
 }
 
+function contentOf(book: MockStorybook, db: MockDb) {
+  const child = db.children.find((c) => c.id === book.childId);
+  return buildStory(pickStorySlug(book.lessonTag, book.parentMessage), child?.name ?? "", child?.gender ?? null);
+}
+
 function toSummary(book: MockStorybook, db: MockDb): StorybookSummary {
   const status = statusOf(book);
-  const child = db.children.find((c) => c.id === book.childId);
-  const content =
-    status === "completed" ? buildStoryContent(book.lessonTag, child?.name ?? "") : null;
+  const content = status === "completed" ? contentOf(book, db) : null;
   return {
     id: book.id,
     childId: book.childId,
@@ -37,7 +40,7 @@ function toSummary(book: MockStorybook, db: MockDb): StorybookSummary {
     periodEnd: book.periodEnd,
     parentMessage: book.parentMessage,
     lessonTag: book.lessonTag,
-    coverImageUrl: content?.pages[0]?.imageUrl ?? null,
+    coverImageUrl: content?.coverImageUrl ?? null,
     createdAt: book.createdAt,
     completedAt: status === "completed" ? finishedAt(book) : null,
   };
@@ -45,17 +48,11 @@ function toSummary(book: MockStorybook, db: MockDb): StorybookSummary {
 
 function toStorybook(book: MockStorybook, db: MockDb): Storybook {
   const summary = toSummary(book, db);
-  const child = db.children.find((c) => c.id === book.childId);
-  const pages =
-    summary.status === "completed"
-      ? buildStoryContent(book.lessonTag, child?.name ?? "").pages.map((page, i) => ({
-          pageNo: i + 1,
-          ...page,
-        }))
-      : [];
+  const content = summary.status === "completed" ? contentOf(book, db) : null;
   return {
     ...summary,
-    pages,
+    pages: content?.pages.map((page, i) => ({ pageNo: i + 1, ...page })) ?? [],
+    questions: content?.questions ?? [],
     errorMessage:
       summary.status === "failed"
         ? "동화를 만드는 중에 문제가 생겼어요. 다시 만들어 주세요."

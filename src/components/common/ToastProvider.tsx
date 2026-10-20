@@ -11,8 +11,8 @@ interface Toast {
 const DURATION_MS = 3500;
 
 const KIND_STYLE: Record<ToastKind, { icon: typeof Info; className: string }> = {
-  success: { icon: CircleCheck, className: "text-mint-deep" },
-  error: { icon: CircleAlert, className: "text-coral-deep" },
+  success: { icon: CircleCheck, className: "text-forest" },
+  error: { icon: CircleAlert, className: "text-error" },
   info: { icon: Info, className: "text-brown/60" },
 };
 
@@ -56,7 +56,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 type="button"
                 onClick={() => dismiss(toast.id)}
                 aria-label="알림 닫기"
-                className="-mr-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-brown/40 hover:bg-mint-light"
+                className="-mr-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-brown/40 hover:bg-sand-light"
               >
                 <X size={16} />
               </button>

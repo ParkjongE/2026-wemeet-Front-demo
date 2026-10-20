@@ -1,344 +1,406 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight, Check, Image as ImageIcon, Sparkles } from "lucide-react";
-import IntroNav from "../components/Intro/IntroNav";
-import ExampleRecordCard from "../components/Intro/ExampleRecordCard";
-import CalendarGrid from "../components/Calendar/CalendarGrid";
-import StorybookViewer from "../components/StorybookViewer/StorybookViewer";
-import { exampleDiaryEntries } from "../mock/diaryEntries";
-import { toEntriesByDate } from "../utils/stats";
-import { hero, mascot, genericDiaryScenes, pointIcons } from "../assets/illustrations";
-import { SAMPLE_STORYBOOK } from "../mock/storybook";
-import { USE_MOCK } from "../api";
+import { useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  ArrowRight,
+  BookHeart,
+  Camera,
+  CloudCheck,
+  HeartHandshake,
+  Lock,
+  PenLine,
+  ShieldCheck,
+  Sparkles,
+  Sticker as StickerIcon,
+  Volume2,
+} from "lucide-react";
+import { DEMO_ACCOUNT, USE_MOCK } from "../api";
 import { useAuth } from "../auth/authContext";
-import { LESSON_TAGS, PARENT_MESSAGE_EXAMPLES } from "../constants/storybook";
+import { brandArt, characterArt } from "../assets/art";
+import { DiaryView } from "../components/Diary/DiaryPaper";
+import Brand from "../components/layout/Brand";
+import StoryBook from "../components/StorybookViewer/StoryBook";
+import { useLogin } from "../hooks/useAccount";
+import { buildExampleEntries } from "../mock/diaryEntries";
+import { buildStory } from "../mock/stories";
+import type { ChildGender } from "../types";
+
+const NAV_LINKS = [
+  { href: "#diary", label: "하루 기록" },
+  { href: "#book", label: "그림동화" },
+  { href: "#safe", label: "안심 보관" },
+  { href: "#faq", label: "자주 묻는 질문" },
+];
+
+const SAMPLE_MESSAGE = "친구와 나누면 기쁨이 두 배가 된다는 걸 알려주고 싶어요. 네 것을 기꺼이 내어줄 줄 아는 마음이 참 예뻐.";
 
 export default function IntroPage() {
-  const entriesByDate = toEntriesByDate(exampleDiaryEntries);
-  const today = new Date();
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const isSignedIn = useAuth().status === "authenticated";
+  const login = useLogin();
+  const navigate = useNavigate();
   const ctaTo = isSignedIn ? "/" : "/signup";
+  const [sampleGender, setSampleGender] = useState<ChildGender>("girl");
+
+  const sampleEntry = useMemo(() => buildExampleEntries()[2], []);
+  const sampleBook = useMemo(() => {
+    const name = sampleGender === "girl" ? "서아" : "도윤";
+    const story = buildStory("sharing", name, sampleGender);
+    return {
+      title: story.title,
+      coverImageUrl: story.coverImageUrl,
+      pages: story.pages.map((p, i) => ({ pageNo: i + 1, ...p })),
+      questions: story.questions,
+      parentMessage: SAMPLE_MESSAGE,
+      protagonistName: name,
+      periodLabel: "봄날의 일주일",
+      lessonTag: "나눔",
+    };
+  }, [sampleGender]);
 
   return (
-    <div className="min-h-screen bg-ivory">
-      <IntroNav />
+    <div className="min-h-screen bg-canvas">
+      {/* 상단 메뉴 */}
+      <header className="sticky top-0 z-30 border-b border-hairline/60 bg-canvas/85 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+          <Brand to="/intro" />
+          <nav className="hidden items-center gap-1 md:flex" aria-label="소개 메뉴">
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="flex min-h-11 items-center rounded-xl px-3.5 text-[15px] font-medium text-brown/60 transition-colors hover:bg-sand-light hover:text-brown"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+          <div className="flex items-center gap-2">
+            {!isSignedIn && (
+              <Link
+                to="/login"
+                className="hidden min-h-11 items-center rounded-xl px-3.5 text-[15px] font-medium text-brown/70 hover:bg-sand-light sm:flex"
+              >
+                로그인
+              </Link>
+            )}
+            <Link
+              to={ctaTo}
+              className="flex min-h-11 items-center rounded-xl bg-brown px-4 text-sm font-semibold text-white transition-colors hover:bg-brown/90"
+            >
+              {isSignedIn ? "내 기록으로" : "시작하기"}
+            </Link>
+          </div>
+        </div>
+      </header>
 
-      {/* B. Hero */}
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-20">
-        <div className="grid items-center gap-10 lg:grid-cols-2">
-          <div className="order-2 text-center lg:order-1 lg:text-left">
-            <p className="mb-3 inline-block rounded-full bg-mint-light px-3 py-1 text-xs font-medium text-mint-deep">
-              AI로 엮는 우리 아이 성장 이야기
+      {/* 히어로 */}
+      <section className="relative overflow-hidden">
+        <div className="mx-auto grid max-w-6xl items-center gap-6 px-4 pb-10 pt-10 sm:px-6 lg:grid-cols-[1fr_1.15fr] lg:pb-20 lg:pt-16">
+          <div className="text-center lg:text-left">
+            <p className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-sand-ink shadow-sm ring-1 ring-hairline">
+              <BookHeart size={14} aria-hidden />
+              육아 기록이 그림책이 되는 곳
             </p>
-            <h1 className="font-story text-3xl leading-tight text-brown sm:text-4xl lg:text-5xl">
+            <h1 className="mt-5 font-book text-[34px] font-bold leading-[1.3] text-brown sm:text-5xl lg:text-[56px]">
               우리 아이의 하루가,
-              <br />한 권의 동화로.
+              <br />
+              한 권의 <span className="relative whitespace-nowrap">
+                그림동화
+                <span className="absolute inset-x-0 bottom-1 -z-10 h-3 rounded-full bg-sand-soft/80" aria-hidden />
+              </span>
+              로.
             </h1>
-            <p className="mx-auto mt-4 max-w-md whitespace-pre-line text-sm leading-relaxed text-brown/70 sm:text-base lg:mx-0">
-              {"사진 한 장과 짧은 이야기로 오늘을 남겨보세요.\nAI가 쌓인 추억에 부모의 마음을 더해,\n아이가 주인공인 그림동화를 만들어줍니다."}
+            <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-brown/65 sm:text-lg lg:mx-0">
+              사진 한 장과 짧은 글로 오늘을 남겨 두세요. 쌓인 하루에 엄마 아빠의 마음을 더하면, 아이가 주인공인 그림책이 완성돼요.
             </p>
-            <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row lg:justify-start">
+            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <Link
                 to={ctaTo}
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-coral px-7 py-3 font-story text-white shadow-md transition-transform hover:scale-105 sm:w-auto"
+                className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-sand px-7 text-base font-semibold text-brown shadow-sm transition-colors hover:bg-sand-strong sm:w-auto"
               >
-                {isSignedIn ? "내 기록 보러 가기" : "하루 기록 시작하기"}
-                <ArrowRight size={18} />
+                {isSignedIn ? "내 기록 보러 가기" : "무료로 시작하기"}
+                <ArrowRight size={18} aria-hidden />
               </Link>
-              <a
-                href="#preview"
-                className="w-full rounded-full border border-hairline bg-white px-7 py-3 text-center text-sm font-medium text-brown/70 transition-colors hover:bg-mint-light sm:w-auto"
-              >
-                그림동화 미리보기
-              </a>
+              {USE_MOCK && !isSignedIn ? (
+                <button
+                  type="button"
+                  onClick={() => login.mutate(DEMO_ACCOUNT, { onSuccess: () => navigate("/") })}
+                  disabled={login.isPending}
+                  className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-white px-7 text-base font-semibold text-brown ring-1 ring-hairline transition-colors hover:bg-sand-light disabled:opacity-60 sm:w-auto"
+                >
+                  {login.isPending ? "체험 계정 여는 중…" : "가입 없이 둘러보기"}
+                </button>
+              ) : (
+                <a
+                  href="#book"
+                  className="flex min-h-14 w-full items-center justify-center rounded-2xl bg-white px-7 text-base font-semibold text-brown ring-1 ring-hairline transition-colors hover:bg-sand-light sm:w-auto"
+                >
+                  그림동화 미리 읽기
+                </a>
+              )}
             </div>
-            {USE_MOCK && (
-              <p className="mt-3 text-xs text-brown/50">
-                지금은 준비된 기록과 동화로 체험할 수 있어요.
-              </p>
-            )}
+            <ul className="mt-8 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-brown/55 lg:justify-start">
+              <li className="flex items-center gap-1.5">
+                <Lock size={15} className="text-ocean-deep" aria-hidden />
+                가족만 보는 비공개 기록
+              </li>
+              <li className="flex items-center gap-1.5">
+                <ShieldCheck size={15} className="text-forest" aria-hidden />
+                아이 사진은 그림 생성에 쓰지 않아요
+              </li>
+            </ul>
           </div>
-
-          <div className="order-1 lg:order-2">
+          <div className="relative">
+            <div className="absolute inset-[8%] rounded-full bg-sand-light" aria-hidden />
             <img
-              src={hero}
-              alt="민트색 멜빵옷을 입은 아기 하루가 커다랗게 펼쳐진 그림책 위에 앉아 있고, 책 속에는 작은 정원과 꽃, 별, 추억이 담긴 종이 조각들이 펼쳐져 있다"
-              className="mx-auto w-full max-w-lg"
+              src={brandArt.hero}
+              alt="노란 가디건을 입은 여자아이와 줄무늬 티셔츠를 입은 남자아이가 바닥에 앉아 커다란 그림책을 함께 펼쳐 보며 웃고 있다"
+              className="relative w-full mix-blend-multiply soft-edges"
             />
           </div>
         </div>
       </section>
 
-      {/* C. 공감 영역 */}
-      <section className="border-y border-hairline bg-white/60 py-16">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6">
-          <div className="text-center">
-            <h2 className="font-story text-2xl text-brown sm:text-3xl">
-              사진은 많은데,
+      {/* 세 단계 */}
+      <section className="border-y border-hairline/70 bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <p className="text-center text-sm font-semibold text-sand-ink">이렇게 만들어져요</p>
+          <h2 className="mt-2 text-center font-book text-3xl font-bold leading-snug text-brown sm:text-4xl">
+            기록하고, 마음을 담고, 함께 읽어요
+          </h2>
+          <ol className="mt-12 grid gap-6 md:grid-cols-3">
+            {[
+              {
+                icon: Camera,
+                title: "오늘을 남겨요",
+                body: "사진 한 장, 한 줄이면 충분해요. 스티커와 예쁜 종이로 꾸미는 재미는 덤이에요.",
+                art: brandArt.emptyDiary,
+              },
+              {
+                icon: HeartHandshake,
+                title: "전하고 싶은 마음을 적어요",
+                body: "‘친구와 나누면 더 즐거워’처럼 아이에게 건네고 싶은 한마디가 이야기의 중심이 돼요.",
+                art: brandArt.makingBook,
+              },
+              {
+                icon: BookHeart,
+                title: "그림책으로 함께 읽어요",
+                body: "아이가 주인공인 6장면 그림동화가 완성돼요. 책장을 넘기며 소리 내어 읽어 줄 수도 있어요.",
+                art: brandArt.momReading,
+              },
+            ].map((step, i) => (
+              <li key={step.title} className="overflow-hidden rounded-[28px] bg-canvas ring-1 ring-hairline/60">
+                <div className="flex h-48 items-end justify-center bg-sand-light/70 px-4">
+                  <img src={step.art} alt="" loading="lazy" className="h-44 w-auto object-contain mix-blend-multiply soft-edges" />
+                </div>
+                <div className="p-6">
+                  <p className="flex items-center gap-2 text-sm font-semibold text-sand-ink">
+                    <step.icon size={17} aria-hidden />
+                    {String(i + 1).padStart(2, "0")}
+                  </p>
+                  <h3 className="mt-2 text-lg font-bold text-brown">{step.title}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-brown/60">{step.body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* 일기 */}
+      <section id="diary" className="scroll-mt-20 py-16 sm:py-24">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.1fr]">
+          <div>
+            <p className="text-sm font-semibold text-sand-ink">하루 기록</p>
+            <h2 className="mt-2 font-book text-3xl font-bold leading-snug text-brown sm:text-4xl">
+              쓰는 날이 기다려지는
               <br />
-              그날의 이야기는 기억나나요?
+              우리 아이 다이어리
             </h2>
-            <p className="mx-auto mt-4 max-w-lg whitespace-pre-line text-sm leading-relaxed text-brown/70">
-              {"처음 친구에게 장난감을 빌려준 날,\n무서워하던 미끄럼틀에 올라간 날.\n사진만으로는 담기 어려운 작은 이야기도\n하루동화에 함께 남겨주세요."}
+            <p className="mt-4 text-base leading-relaxed text-brown/65">
+              사진을 고르면 바로 올라가고, 쓰던 글은 자동으로 임시 저장돼요. 바쁜 날엔 사진만, 여유로운 날엔 스티커까지 붙여 마음껏 꾸며 보세요.
+            </p>
+            <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+              {[
+                [StickerIcon, "손그림 스티커 18종", "하트, 도장, ‘참 잘했어요’까지"],
+                [PenLine, "종이·사진 틀 고르기", "줄노트, 모눈, 크라프트, 폴라로이드"],
+                [CloudCheck, "자동 임시 저장", "쓰다 나가도 그대로 이어서"],
+                [Camera, "하루 사진 5장", "고르면 바로 안전하게 업로드"],
+              ].map(([Icon, title, body]) => {
+                const I = Icon as typeof Camera;
+                return (
+                  <li key={title as string} className="flex gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-sand-ink shadow-sm ring-1 ring-hairline">
+                      <I size={18} aria-hidden />
+                    </span>
+                    <div>
+                      <p className="font-semibold text-brown">{title as string}</p>
+                      <p className="text-sm text-brown/55">{body as string}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+          <div className="mx-auto w-full max-w-lg rotate-[1.2deg]">
+            <DiaryView entry={sampleEntry} />
+          </div>
+        </div>
+      </section>
+
+      {/* 그림동화 */}
+      <section id="book" className="scroll-mt-16 bg-[#f6efe3] py-16 sm:py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="text-center">
+            <p className="text-sm font-semibold text-sand-ink">그림동화 미리 읽기</p>
+            <h2 className="mt-2 font-book text-3xl font-bold leading-snug text-brown sm:text-4xl">
+              친구에게 장난감을 빌려준 하루가
+              <br className="hidden sm:block" /> 이런 그림책이 됐어요
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-brown/65">
+              진짜 책처럼 오른쪽 장을 넘겨 보세요. 왼쪽엔 그림, 오른쪽엔 이야기가 있고, 마지막 장에는 부모님의 마음이 편지로 실려요.
+            </p>
+            <div className="mt-6 inline-flex rounded-2xl bg-white p-1 shadow-sm ring-1 ring-hairline" role="radiogroup" aria-label="주인공 고르기">
+              {(["girl", "boy"] as const).map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  role="radio"
+                  aria-checked={sampleGender === g}
+                  onClick={() => setSampleGender(g)}
+                  className={[
+                    "flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors",
+                    sampleGender === g ? "bg-brown text-white" : "text-brown/60 hover:text-brown",
+                  ].join(" ")}
+                >
+                  <img src={characterArt[g].portrait} alt="" className="h-7 w-7 rounded-full bg-paper object-cover object-top" />
+                  {g === "girl" ? "서아가 주인공" : "도윤이가 주인공"}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="mt-10">
+            <StoryBook key={sampleGender} book={sampleBook} maxHeight={640} compact />
+          </div>
+          <p className="mt-6 flex items-center justify-center gap-1.5 text-center text-sm text-brown/55">
+            <Volume2 size={16} aria-hidden />
+            ‘소리 내어 읽어주기’를 누르면 잠자리 동화처럼 읽어 드려요.
+          </p>
+        </div>
+      </section>
+
+      {/* 캐릭터 */}
+      <section className="py-16 sm:py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="text-center">
+            <p className="text-sm font-semibold text-sand-ink">우리 아이 캐릭터</p>
+            <h2 className="mt-2 font-book text-3xl font-bold leading-snug text-brown sm:text-4xl">
+              아이 이름을 단 그림책 주인공
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-brown/65">
+              실제 사진 대신, 따뜻한 수채화로 그린 두 아이 중 한 명이 우리 아이의 이름으로 이야기 속을 뛰어다녀요.
             </p>
           </div>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {[
-              { text: "사진 한 장으로 시작", image: pointIcons.photoStart },
-              { text: "짧은 일화 한 줄이면 충분", image: pointIcons.shortStory },
-              { text: "날짜별로 모이는 성장의 순간", image: pointIcons.growthByDate },
-            ].map((point) => (
-              <div
-                key={point.text}
-                className="flex flex-col items-center gap-3 rounded-2xl bg-mint-light px-4 py-5 text-center"
-              >
-                <img src={point.image} alt="" className="h-16 w-16 shrink-0" />
-                <div className="flex items-center gap-1.5 text-sm text-brown">
-                  <Check size={16} className="shrink-0 text-mint-deep" />
-                  {point.text}
+          <div className="mt-12 grid gap-6 sm:grid-cols-2">
+            {(
+              [
+                ["girl", "여자아이 캐릭터", "단발머리에 노란 머리핀, 겨자색 가디건이 잘 어울리는 다정한 아이"],
+                ["boy", "남자아이 캐릭터", "삐죽 솟은 머리카락에 줄무늬 티셔츠, 웃음이 많은 개구쟁이"],
+              ] as const
+            ).map(([g, title, desc]) => (
+              <div key={g} className="flex items-end gap-4 overflow-hidden rounded-[28px] bg-white px-6 pt-6 shadow-card ring-1 ring-hairline/60">
+                <img src={characterArt[g].full} alt="" loading="lazy" className="-mb-2 h-56 w-auto shrink-0 mix-blend-multiply soft-edges sm:h-64" />
+                <div className="pb-8">
+                  <p className="text-lg font-bold text-brown">{title}</p>
+                  <p className="mt-2 text-[15px] leading-relaxed text-brown/60">{desc}</p>
                 </div>
               </div>
             ))}
           </div>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            <ExampleRecordCard
-              imageSrc={genericDiaryScenes[0]}
-              dateLabel="8월 21일 · 실제 기록 예시"
-              text="무섭다며 망설이던 그네를 오늘은 혼자 힘으로 끝까지 올라갔어요."
-            />
-            <ExampleRecordCard
-              imageSrc={genericDiaryScenes[1]}
-              dateLabel="8월 27일 · 실제 기록 예시"
-              text="블록 탑이 와르르 무너졌는데도 울지 않고 다시 씩씩하게 쌓았어요."
-            />
-            <ExampleRecordCard
-              imageSrc={genericDiaryScenes[4]}
-              dateLabel="9월 3일 · 실제 기록 예시"
-              text="오늘 서아가 친구에게 노란 삽을 빌려줬어요. 둘이 함께 모래성을 만들며 한참을 웃었어요."
-            />
-          </div>
         </div>
       </section>
 
-      {/* D. 핵심 기능 1 */}
-      <section id="record" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-16 sm:px-6">
-        <div className="grid items-center gap-10 lg:grid-cols-2">
-          <div>
-            <p className="text-xs font-semibold text-coral-deep">01 · 오늘의 기록</p>
-            <h2 className="mt-2 font-story text-2xl text-brown sm:text-3xl">
-              길게 쓰지 않아도,
-              <br />
-              소중한 기록이 돼요.
-            </h2>
-            <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-brown/70">
-              {"오늘 찍은 사진을 고르고 기억하고 싶은 일을 적어주세요.\n바쁜 날에는 사진만 남겨도 괜찮아요.\n아이의 하루가 캘린더에 차곡차곡 쌓입니다."}
-            </p>
-            <div className="mt-6">
-              <ExampleRecordCard
-                imageSrc={genericDiaryScenes[2]}
-                dateLabel="예시 기록"
-                text="오늘 서아가 친구에게 노란 삽을 빌려줬어요. 둘이 함께 모래성을 만들며 한참을 웃었어요."
-              />
-            </div>
-          </div>
-          <div className="rounded-2xl bg-white p-4 shadow-md sm:p-6">
-            <p className="mb-3 text-center font-story text-sm text-brown/60">
-              {today.getFullYear()}년 {today.getMonth() + 1}월
-            </p>
-            <CalendarGrid
-              year={today.getFullYear()}
-              month={today.getMonth()}
-              entriesByDate={entriesByDate}
-              onDayClick={() => {}}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* E. 핵심 기능 2 */}
-      <section id="ai-story" className="scroll-mt-20 border-y border-hairline bg-white/60 py-16">
+      {/* 안심 */}
+      <section id="safe" className="scroll-mt-16 border-y border-hairline/70 bg-white py-16 sm:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center">
-            <p className="text-xs font-semibold text-coral-deep">02 · AI 그림동화</p>
-            <h2 className="mt-2 font-story text-2xl text-brown sm:text-3xl">
-              부모님이 전하고 싶은 메시지가,
-              <br />
-              동화의 중심이 돼요.
+            <p className="text-sm font-semibold text-forest">안심 보관</p>
+            <h2 className="mt-2 font-book text-3xl font-bold leading-snug text-brown sm:text-4xl">
+              아이의 기록이니까, 더 조심스럽게
             </h2>
-            <p className="mx-auto mt-4 max-w-lg whitespace-pre-line text-sm leading-relaxed text-brown/70">
-              {"아이에게 꼭 건네고 싶은 한마디를 자유롭게 적어 주세요.\nAI가 그 메시지를 이야기의 중심에 두고, 기록 속 경험을 소재로 엮어\n장면에 어울리는 삽화와 함께 아이만의 그림동화를 구성합니다."}
-            </p>
           </div>
-
-          <div className="mt-10 grid gap-5 sm:grid-cols-3">
-            <div className="rounded-2xl border border-hairline bg-white p-6 text-center">
-              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-coral-deep text-white">
-                <Sparkles size={22} />
-              </span>
-              <h3 className="mt-4 font-story text-base text-brown">부모가 전하고 싶은 메시지</h3>
-              <p className="mt-1.5 text-sm text-brown/60">자유롭게 적는 한마디가 이야기의 중심</p>
-              <p className="mt-1 text-xs text-brown/40">교훈 태그(선택) · {LESSON_TAGS.join(" · ")}</p>
-            </div>
-            <div className="rounded-2xl border border-hairline bg-white p-6 text-center">
-              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-mint-deep text-white">
-                <ImageIcon size={22} />
-              </span>
-              <h3 className="mt-4 font-story text-base text-brown">우리 아이의 추억</h3>
-              <p className="mt-1.5 text-sm text-brown/60">직접 남긴 사진과 짧은 일화가 이야기 소재로</p>
-            </div>
-            <div className="rounded-2xl border border-hairline bg-white p-6 text-center">
-              <img src={mascot.write} alt="" className="mx-auto h-12 w-12" />
-              <h3 className="mt-4 font-story text-base text-brown">AI가 구성하는 그림동화</h3>
-              <p className="mt-1.5 text-sm text-brown/60">아이가 주인공인 이야기와 장면별 삽화</p>
-            </div>
-          </div>
-
-          <div className="mx-auto mt-10 max-w-md rounded-2xl bg-yellow-light p-5 text-sm text-brown">
-            <p>
-              <strong className="font-semibold">전하고 싶은 메시지</strong> · “{PARENT_MESSAGE_EXAMPLES[1]}”
-            </p>
-            <p className="mt-1">
-              <strong className="font-semibold">기록</strong> · 친구에게 노란 삽을 빌려준 날
-            </p>
-            <p className="mt-1">
-              <strong className="font-semibold">동화</strong> · 친구와 함께 꽃씨를 심으며 나누는
-              기쁨을 발견하는 이야기
-            </p>
-          </div>
-
-          {USE_MOCK && (
-            <p className="mt-6 text-center text-xs text-brown/50">
-              미리 준비된 예시로 체험하는 AI 그림동화입니다.
-            </p>
-          )}
-        </div>
-      </section>
-
-      {/* F. 동화 미리보기 */}
-      <section id="preview" className="scroll-mt-20 mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <div className="text-center">
-          <h2 className="font-story text-2xl text-brown sm:text-3xl">
-            익숙한 추억이,
-            <br />
-            새로운 이야기로 펼쳐져요.
-          </h2>
-          <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-brown/70">
-            친구에게 삽을 빌려주었던 하루가 함께 꽃밭을 가꾸는 작은 모험이
-            되었어요.
-          </p>
-          <div className="mt-4">
-            <p className="font-story text-lg text-coral-deep">{SAMPLE_STORYBOOK.title}</p>
-            <p className="mt-1 text-sm text-brown/60">
-              교훈 태그: {SAMPLE_STORYBOOK.lessonTag} · 예시 그림동화 · {SAMPLE_STORYBOOK.pages.length}페이지
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-8">
-          <StorybookViewer storybook={SAMPLE_STORYBOOK} />
-        </div>
-
-        <div className="mx-auto mt-8 max-w-md rounded-2xl border border-hairline bg-white p-5">
-          <p className="mb-2 text-sm font-semibold text-brown">이 이야기의 시작이 된 기록</p>
-          <div className="flex items-start gap-3">
-            <img src={genericDiaryScenes[2]} alt="" loading="lazy" className="h-16 w-16 shrink-0 rounded-xl object-cover" />
-            <div>
-              <p className="text-xs font-medium text-mint-deep">실제 기록 예시 · 나눔</p>
-              <p className="mt-1 text-sm text-brown/70">
-                친구에게 노란 삽을 빌려준 날의 짧은 기록이 이 동화의 시작이
-                되었어요.
-              </p>
-            </div>
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
+            {[
+              [Lock, "우리 가족만 봐요", "기록과 동화는 공개되지 않아요. 로그인한 계정에서만 열리고, 링크로 퍼지지 않아요.", "bg-ocean-light text-ocean-deep"],
+              [ShieldCheck, "사진은 그림 재료가 아니에요", "삽화는 그림책 캐릭터로 그려요. 아이 얼굴 사진을 그림 생성에 넣지 않아요.", "bg-forest-light text-forest"],
+              [CloudCheck, "쓰는 순간부터 지켜요", "사진은 고르는 즉시 올라가고, 글은 자동으로 임시 저장돼요. 언제든 고치고 지울 수 있어요.", "bg-sand-light text-sand-ink"],
+            ].map(([Icon, title, body, tone]) => {
+              const I = Icon as typeof Lock;
+              return (
+                <div key={title as string} className="rounded-[28px] bg-canvas p-7 ring-1 ring-hairline/60">
+                  <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${tone as string}`}>
+                    <I size={22} aria-hidden />
+                  </span>
+                  <h3 className="mt-5 text-lg font-bold text-brown">{title as string}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-brown/60">{body as string}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* G. 이용 방법 */}
-      <section className="border-y border-hairline bg-white/60 py-16">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <h2 className="text-center font-story text-2xl text-brown sm:text-3xl">
-            하루를 남기고,
-            <br />
-            함께 읽는 시간까지.
-          </h2>
-          <div className="mt-10 grid gap-8 sm:grid-cols-3">
-            <div className="text-center">
-              <span className="font-story text-4xl text-coral/70">01</span>
-              <h3 className="mt-2 font-story text-lg text-brown">오늘을 남겨요</h3>
-              <p className="mt-1.5 text-sm text-brown/60">
-                사진과 짧은 이야기로 아이의 하루를 기록해요.
-              </p>
-            </div>
-            <div className="text-center">
-              <span className="font-story text-4xl text-coral/70">02</span>
-              <h3 className="mt-2 font-story text-lg text-brown">추억과 마음을 골라요</h3>
-              <p className="mt-1.5 text-sm text-brown/60">
-                동화에 담을 기간과 아이에게 전하고 싶은 마음을 선택해요.
-              </p>
-            </div>
-            <div className="text-center">
-              <span className="font-story text-4xl text-coral/70">03</span>
-              <h3 className="mt-2 font-story text-lg text-brown">우리 아이 동화를 읽어요</h3>
-              <p className="mt-1.5 text-sm text-brown/60">
-                AI가 구성한 이야기와 삽화로 아이와 추억을 다시 만나보세요.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* H. FAQ */}
-      <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-        <h2 className="text-center font-story text-2xl text-brown sm:text-3xl">자주 묻는 질문</h2>
-        <div className="mt-8 space-y-3">
-          {FAQS.map((faq, i) => (
-            <details
-              key={faq.q}
-              open={openFaq === i}
-              onToggle={(e) => {
-                if ((e.target as HTMLDetailsElement).open) setOpenFaq(i);
-                else if (openFaq === i) setOpenFaq(null);
-              }}
-              className="group rounded-2xl border border-hairline bg-white p-4 open:shadow-sm"
-            >
-              <summary className="cursor-pointer list-none font-story text-sm text-brown marker:content-none">
-                <span className="flex items-center justify-between gap-2">
+      {/* 자주 묻는 질문 */}
+      <section id="faq" className="scroll-mt-16 py-16 sm:py-24">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <h2 className="text-center font-book text-3xl font-bold text-brown sm:text-4xl">자주 묻는 질문</h2>
+          <div className="mt-10 divide-y divide-hairline rounded-[28px] bg-white px-5 shadow-card ring-1 ring-hairline/60 sm:px-8">
+            {FAQS.map((faq) => (
+              <details key={faq.q} className="group py-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-semibold text-brown marker:content-none sm:text-base">
                   {faq.q}
-                  <span className="shrink-0 text-brown/30 transition-transform group-open:rotate-45">+</span>
-                </span>
-              </summary>
-              <p className="mt-2.5 text-sm leading-relaxed text-brown/70">{faq.a}</p>
-            </details>
-          ))}
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sand-light text-sand-ink transition-transform group-open:rotate-45">
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 pr-10 text-[15px] leading-relaxed text-brown/65">{faq.a}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* I. 마지막 CTA */}
-      <section className="bg-coral py-16 text-center text-white">
-        <img src={mascot.hug} alt="" className="mx-auto mb-4 h-28 w-28" />
-        <h2 className="font-story text-2xl sm:text-3xl">
-          오늘의 작은 순간,
-          <br />
-          내일의 소중한 동화.
-        </h2>
-        <p className="mt-2 text-sm text-white/90">잊고 싶지 않은 우리 아이의 하루를 남겨보세요.</p>
-        <Link
-          to={ctaTo}
-          className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3 font-story text-coral-deep shadow-md transition-transform hover:scale-105"
-        >
-          첫 기록 남기러 가기
-          <ArrowRight size={18} />
-        </Link>
+      {/* 마지막 권유 */}
+      <section className="px-4 pb-16 sm:px-6 sm:pb-24">
+        <div className="mx-auto grid max-w-6xl items-center gap-6 overflow-hidden rounded-[32px] bg-sand-light px-6 pt-10 sm:px-12 lg:grid-cols-[1fr_1fr] lg:pt-0">
+          <div className="text-center lg:py-14 lg:text-left">
+            <h2 className="font-book text-3xl font-bold leading-snug text-brown sm:text-4xl">
+              오늘의 작은 순간이
+              <br />
+              내일의 그림책이 돼요
+            </h2>
+            <p className="mt-3 text-base text-brown/65">잊고 싶지 않은 우리 아이의 하루를 지금 남겨 보세요.</p>
+            <Link
+              to={ctaTo}
+              className="mt-7 inline-flex min-h-14 items-center gap-2 rounded-2xl bg-brown px-7 text-base font-semibold text-white transition-colors hover:bg-brown/90"
+            >
+              <Sparkles size={18} aria-hidden />
+              {isSignedIn ? "오늘 기록하러 가기" : "무료로 시작하기"}
+            </Link>
+          </div>
+          <img src={brandArt.momReading} alt="" loading="lazy" className="mx-auto w-full max-w-lg mix-blend-multiply soft-edges" />
+        </div>
       </section>
 
-      <footer className="border-t border-hairline bg-ivory">
-        <div className="mx-auto max-w-6xl px-4 py-8 text-center text-xs text-brown/50 sm:px-6">
-          <p className="font-story mb-1 text-sm text-brown/70">하루동화</p>
-          <p>우리 아이의 하루가, 한 권의 동화로.</p>
-          {USE_MOCK && <p className="mt-1">체험 버전</p>}
+      <footer className="border-t border-hairline bg-white">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-10 text-sm text-brown/50 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div>
+            <Brand to="/intro" size="sm" />
+            <p className="mt-2">우리 아이의 하루가, 한 권의 동화로.</p>
+          </div>
+          <div className="text-xs leading-relaxed sm:text-right">
+            {USE_MOCK && <p className="font-semibold text-sand-ink">지금 보고 계신 화면은 체험 버전이에요.</p>}
+            <p>© {new Date().getFullYear()} 하루동화</p>
+          </div>
         </div>
       </footer>
     </div>
@@ -348,24 +410,24 @@ export default function IntroPage() {
 const FAQS = [
   {
     q: "매일 길게 써야 하나요?",
-    a: "아니요. 사진 한 장이나 짧은 이야기 한 줄부터 시작할 수 있어요. 기억하고 싶은 순간을 부담 없이 남겨주세요.",
+    a: "아니요. 사진 한 장이나 한 줄이면 충분해요. 바쁜 날은 건너뛰어도 괜찮고, 지난 날짜에도 언제든 기록할 수 있어요.",
   },
   {
-    q: "AI는 무엇을 만들어주나요?",
-    a: "부모님이 적은 메시지를 중심에 두고, 기록 속 일화를 엮어 이야기와 장면별 삽화를 구성해요. 요청하면 몇 분 안에 완성되고, 서재에서 확인할 수 있어요.",
+    q: "그림동화는 어떻게 만들어지나요?",
+    a: "기간을 고르고 아이에게 전하고 싶은 마음을 적으면, 그 마음을 중심 줄거리로 삼고 기록 속 일화를 소재로 엮어 6장면의 그림책을 만들어요. 마지막 장에는 적어 주신 마음이 편지로 실려요.",
   },
   {
-    q: "아이의 사진이 그대로 동화 캐릭터가 되나요?",
-    a: "현재 체험에서는 준비된 아기 캐릭터를 사용해요. 실제 사진 속 외모를 재현하는 기능은 제공하지 않아요.",
+    q: "아이 사진이 그대로 동화 캐릭터가 되나요?",
+    a: "아니요. 아이 얼굴 사진은 그림 생성에 쓰지 않아요. 수채화로 그린 여자아이·남자아이 캐릭터 중 하나를 골라, 아이 이름을 달고 주인공이 돼요.",
   },
   {
-    q: "기록이 얼마나 있어야 하나요?",
-    a: "고른 기간(최대 31일)에 기록이 하나 이상 있으면 만들 수 있어요. 기록이 많을수록 이야기 소재가 풍부해져요.",
+    q: "기록이 얼마나 있어야 동화를 만들 수 있나요?",
+    a: "고른 기간(최대 31일)에 기록이 하나라도 있으면 만들 수 있어요. 기록이 많을수록 이야기 속 장면이 풍부해져요.",
   },
   {
-    q: "지금 올린 사진과 기록은 저장되나요?",
+    q: "올린 사진과 기록은 안전하게 저장되나요?",
     a: USE_MOCK
-      ? "지금 체험 버전에서는 서버에 올리지 않고 이 브라우저에만 저장해요. 브라우저 데이터를 지우면 함께 사라져요."
-      : "로그인한 계정에 안전하게 저장돼요. 기록과 동화는 언제든 수정하거나 삭제할 수 있어요.",
+      ? "지금은 체험 버전이라 서버 대신 이 브라우저에만 저장돼요. 정식 서비스에서는 계정에 보관되어 어느 기기에서나 볼 수 있어요."
+      : "로그인한 계정에 보관되어 어느 기기에서나 볼 수 있어요. 기록과 동화는 언제든 고치거나 지울 수 있어요.",
   },
 ];

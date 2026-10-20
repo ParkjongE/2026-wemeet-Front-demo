@@ -286,7 +286,7 @@ src/
 - 런타임에 AI API(OpenAI, Gemini 등)를 호출하지 않는다.
 - 비밀 키를 프론트 코드나 `.env`에 넣지 않는다. 프론트에는 `VITE_API_BASE_URL`만 둔다.
 - 백엔드 코드를 이 저장소에 만들지 않는다.
-- 기존 삽화 에셋과 색상 토큰을 임의로 바꾸지 않는다.
+- 색상 토큰은 NomadKit(`.design/DESIGN.md`)을 따르고, 캐릭터·동화 삽화는 `src/assets/` 의 서아·도윤 그림체를 유지한다.
 
 ---
 
@@ -301,3 +301,24 @@ src/
 | 동화 기간 | 기본 7일, 최대 31일 |
 | 동화 완성 알림 | 서재 폴링만 (푸시·이메일 알림은 나중에) |
 | 그림체 선택 | 없음 (나중에 동화 생성 요청에 `art_style` 필드 추가) |
+
+---
+
+## 10. 디자인 개편으로 추가된 필드 (백엔드 반영 필요)
+
+디자인 시스템은 NomadKit(`.design/DESIGN.md`)을 따른다. 화면 개편과 함께 아래 필드가 API에 추가됐다. 목업 API는 이미 이 모양으로 동작한다.
+
+| 대상 | 필드 | 설명 |
+|---|---|---|
+| `Child` / `POST·PATCH /children` | `gender: "girl" \| "boy" \| null` | 동화 주인공 캐릭터. `girl`은 서아 캐릭터, `boy`는 도윤 캐릭터로 삽화를 그린다 |
+| `DiaryEntry` / `PUT /children/{id}/diaries/{date}` | `decoration: { paper, frame, stickers[] } \| null` | 일기 꾸미기. 서버는 JSON 그대로 저장하고 돌려주면 된다 |
+| `decoration.paper` | `"lined" \| "grid" \| "dot" \| "blossom" \| "kraft"` | 종이 무늬 |
+| `decoration.frame` | `"polaroid" \| "tape" \| "round"` | 사진 틀 |
+| `decoration.stickers[]` | `{ id, kind, x, y, rotate, scale }` | `x`는 종이 너비 대비 %, `y`는 종이 위쪽에서의 거리를 종이 너비 대비 %로 나타낸다 |
+| `Storybook` | `questions: string[]` | 다 읽고 아이와 나눌 질문(2개 안팎). 완성 전에는 빈 배열 |
+| `Storybook.coverImageUrl` | (기존) | 이제 1페이지 삽화가 아니라 표지 전용 그림을 넣는다 |
+
+- 동화는 장면 6개를 기준으로 한다. 장면마다 삽화 1장(책 왼쪽 면)과 글 3~5문장(오른쪽 면)이 짝을 이룬다.
+- 표지·헌정 문구·부모 메시지 편지·질문·뒤표지는 프론트가 `title`, `parentMessage`, `questions`로 직접 구성한다.
+- 아이 사진은 삽화 생성 입력으로 쓰지 않는다. 화면 문구도 이 원칙을 약속하므로 백엔드도 지켜야 한다.
+- 일기 작성 중 내용(글·날씨·기분·꾸미기)은 브라우저에 임시 저장(`harudonghwa.draft.*`)하고, 저장에 성공하면 지운다.

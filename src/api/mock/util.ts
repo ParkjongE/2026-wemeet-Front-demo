@@ -1,5 +1,5 @@
 import { ApiError, getToken } from "../client";
-import { genericDiaryScenes } from "../../assets/illustrations";
+import { diaryPhoto } from "../../assets/art";
 import type { DiaryEntry } from "../../types";
 import { loadDb, type MockChild, type MockDb, type MockDiary, type MockUser } from "./db";
 
@@ -38,17 +38,14 @@ export function requireChild(childId: string, db: MockDb = loadDb()): MockChild 
 }
 
 export function resolvePhotoUrl(url: string): string {
-  if (url.startsWith("asset:")) {
-    const index = Number(url.slice("asset:".length));
-    return genericDiaryScenes[index % genericDiaryScenes.length];
-  }
-  return url;
+  return url.startsWith("art:") ? diaryPhoto(url.slice("art:".length)) : url;
 }
 
 export function toDiaryEntry(diary: MockDiary, db: MockDb = loadDb()): DiaryEntry {
   const { photoIds, ...rest } = diary;
   return {
     ...rest,
+    decoration: rest.decoration ?? null,
     photos: photoIds.flatMap((id) => {
       const photo = db.photos.find((p) => p.id === id);
       return photo ? [{ id: photo.id, url: resolvePhotoUrl(photo.url) }] : [];

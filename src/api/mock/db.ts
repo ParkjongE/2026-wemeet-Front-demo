@@ -1,8 +1,8 @@
 // 목업 API가 쓰는 localStorage 저장소. 새로고침해도 데이터가 유지된다.
 import { ApiError } from "../client";
-import type { Weather } from "../../types";
+import type { ChildGender, DiaryDecoration, Weather } from "../../types";
 
-const DB_KEY = "harudonghwa.mock.db.v1";
+const DB_KEY = "harudonghwa.mock.db.v2";
 
 export interface MockUser {
   id: string;
@@ -15,6 +15,7 @@ export interface MockChild {
   userId: string;
   name: string;
   birthDate: string | null;
+  gender: ChildGender | null;
 }
 
 export interface MockDiary {
@@ -25,11 +26,12 @@ export interface MockDiary {
   weather: Weather | null;
   moodTag: string | null;
   photoIds: string[];
+  decoration: DiaryDecoration | null;
   createdAt: string;
   updatedAt: string;
 }
 
-// url은 dataURL이거나, 번들 삽화를 가리키는 "asset:<index>" 형식이다.
+// url은 dataURL이거나, 번들 예시 사진을 가리키는 "art:<key>" 형식이다.
 export interface MockPhoto {
   id: string;
   userId: string;

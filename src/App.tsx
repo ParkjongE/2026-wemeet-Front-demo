@@ -12,10 +12,11 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import SettingsPage from "./pages/SettingsPage";
+import AppShell from "./components/layout/AppShell";
 
 function RootLayout() {
   return (
-    <div className="min-h-screen bg-ivory">
+    <div className="min-h-screen bg-canvas">
       <Outlet />
     </div>
   );
@@ -44,12 +45,17 @@ const router = createBrowserRouter([
           {
             element: <RequireChild />,
             children: [
-              { path: "/", element: <AppHome /> },
-              { path: "/diary/:date", element: <DiaryEntryPage /> },
-              { path: "/storybooks", element: <StorybookLibraryPage /> },
-              { path: "/storybooks/new", element: <StorybookNewPage /> },
-              { path: "/storybooks/:id", element: <StorybookDetailPage /> },
-              { path: "/settings", element: <SettingsPage /> },
+              {
+                element: <AppShell />,
+                children: [
+                  { path: "/", element: <AppHome /> },
+                  { path: "/diary/:date", element: <DiaryEntryPage /> },
+                  { path: "/storybooks", element: <StorybookLibraryPage /> },
+                  { path: "/storybooks/new", element: <StorybookNewPage /> },
+                  { path: "/storybooks/:id", element: <StorybookDetailPage /> },
+                  { path: "/settings", element: <SettingsPage /> },
+                ],
+              },
             ],
           },
         ],

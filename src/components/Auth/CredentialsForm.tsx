@@ -57,7 +57,7 @@ export default function CredentialsForm({
         error={submitted ? passwordError : undefined}
       />
       {serverError && (
-        <p role="alert" className="rounded-xl bg-coral-light/60 px-4 py-3 text-sm text-brown">
+        <p role="alert" className="rounded-xl bg-error-light px-4 py-3 text-sm text-brown">
           {serverError}
         </p>
       )}

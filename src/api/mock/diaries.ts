@@ -54,6 +54,7 @@ export const mockDiariesApi: DiariesApi = {
         weather: input.weather ?? null,
         moodTag: input.moodTag ?? null,
         photoIds: [...input.photoIds],
+        decoration: input.decoration ?? null,
         updatedAt: now,
       });
     } else {
@@ -65,6 +66,7 @@ export const mockDiariesApi: DiariesApi = {
         weather: input.weather ?? null,
         moodTag: input.moodTag ?? null,
         photoIds: [...input.photoIds],
+        decoration: input.decoration ?? null,
         createdAt: now,
         updatedAt: now,
       } satisfies MockDiary;

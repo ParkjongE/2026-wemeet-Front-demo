@@ -45,7 +45,7 @@ export const mockAuthApi: AuthApi = {
     const user = requireUser(db);
     const children: Child[] = db.children
       .filter((c) => c.userId === user.id)
-      .map(({ id, name, birthDate }) => ({ id, name, birthDate }));
+      .map(({ id, name, birthDate, gender }) => ({ id, name, birthDate, gender: gender ?? null }));
     return clone({ user: publicUser(user), children });
   },
 };

@@ -7,10 +7,10 @@ export const WEATHER_OPTIONS: {
   icon: LucideIcon;
   colorClass: string;
 }[] = [
-  { value: "sunny", label: "맑음", icon: Sun, colorClass: "text-yellow-600" },
-  { value: "cloudy", label: "흐림", icon: Cloud, colorClass: "text-gray-400" },
-  { value: "rainy", label: "비", icon: CloudRain, colorClass: "text-blue-400" },
-  { value: "snowy", label: "눈", icon: Snowflake, colorClass: "text-sky-300" },
+  { value: "sunny", label: "맑음", icon: Sun, colorClass: "text-warning" },
+  { value: "cloudy", label: "흐림", icon: Cloud, colorClass: "text-brown/45" },
+  { value: "rainy", label: "비", icon: CloudRain, colorClass: "text-ocean" },
+  { value: "snowy", label: "눈", icon: Snowflake, colorClass: "text-ocean-soft" },
 ];
 
 export function getWeatherOption(weather?: Weather | null) {
