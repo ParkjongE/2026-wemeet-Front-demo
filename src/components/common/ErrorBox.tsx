@@ -10,7 +10,7 @@ export default function ErrorBox({ message, onRetry, className = "" }: ErrorBoxP
   return (
     <div
       role="alert"
-      className={`flex flex-col items-center gap-3 rounded-3xl border border-error/15 bg-error-light/50 p-6 text-center ${className}`}
+      className={`flex flex-col items-center gap-3 rounded-xl border border-error/15 bg-error-light/50 p-6 text-center ${className}`}
     >
       <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-error shadow-sm">
         <CloudOff size={20} aria-hidden />

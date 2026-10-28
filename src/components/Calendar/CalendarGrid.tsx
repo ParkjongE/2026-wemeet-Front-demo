@@ -51,10 +51,10 @@ export default function CalendarGrid({
               disabled={isDisabled}
               aria-label={`${cell.date.getMonth() + 1}월 ${cell.date.getDate()}일${entry ? ", 기록 있음" : isToday ? ", 오늘" : ""}`}
               className={[
-                "group relative aspect-square overflow-hidden rounded-xl transition-all sm:rounded-2xl",
+                "group relative aspect-square overflow-hidden rounded-xl transition-all sm:rounded-lg",
                 photo ? "bg-sand-light" : entry ? "bg-sand-light" : "bg-canvas",
                 muted ? "opacity-35" : "",
-                isDisabled ? "cursor-default opacity-30" : "hover:-translate-y-0.5 hover:shadow-card",
+                isDisabled ? "cursor-default opacity-30" : "hover:ring-1 hover:ring-sand",
                 isToday && !entry ? "ring-2 ring-sand ring-offset-1 ring-offset-white" : "",
                 "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean",
               ].join(" ")}

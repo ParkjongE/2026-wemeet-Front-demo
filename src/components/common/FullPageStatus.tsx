@@ -13,7 +13,7 @@ export default function FullPageStatus({ kind, message, onRetry, secondaryAction
     <div className="flex min-h-screen flex-col items-center justify-center bg-canvas px-4 text-center">
       {kind === "loading" ? (
         <div role="status" aria-live="polite" className="flex flex-col items-center">
-          <BrandMark className="animate-bob h-12 w-12" />
+          <BrandMark className="h-12 w-12" />
           <p className="mt-4 text-sm text-brown/60">{message ?? "잠시만 기다려 주세요…"}</p>
         </div>
       ) : (

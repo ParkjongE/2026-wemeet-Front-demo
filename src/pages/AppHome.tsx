@@ -11,7 +11,7 @@ import {
   LayoutList,
   NotebookPen,
   PenLine,
-  Wand2,
+  BookPlus,
 } from "lucide-react";
 import CalendarGrid from "../components/Calendar/CalendarGrid";
 import TimelineView from "../components/Calendar/TimelineView";
@@ -22,7 +22,7 @@ import { useCurrentChild } from "../auth/authContext";
 import { useDiaries } from "../hooks/useDiaries";
 import { useStorybooks } from "../hooks/useStorybooks";
 import { errorMessage } from "../api";
-import { brandArt, characterArt } from "../assets/art";
+import { brandArt } from "../assets/art";
 import { MONTH_LABEL_FORMAT, addDays, buildMonthGrid, daysBetweenInclusive, todayString } from "../utils/date";
 import { computeStreak, countThisMonth, toEntriesByDate } from "../utils/stats";
 import { nameForms, possessive } from "../utils/korean";
@@ -76,66 +76,95 @@ export default function AppHome() {
   const monthEntriesInView = (monthQuery.data ?? []).filter((e) =>
     e.date.startsWith(`${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`),
   );
+  const latestEntry = [...(recentQuery.data ?? [])].sort((a, b) => b.date.localeCompare(a.date))[0];
   const dayCount = child.birthDate ? daysBetweenInclusive(child.birthDate, todayStr) : null;
-  const art = characterArt[child.gender ?? "girl"];
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-10">
       {/* 인사 + 오늘 */}
-      <section className="relative overflow-hidden rounded-[28px] bg-sand-light px-6 pb-6 pt-7 sm:px-10 sm:pt-10">
-        <div className="absolute -right-16 -top-20 h-72 w-72 rounded-full bg-sand-soft/50" aria-hidden />
-        <div className="relative grid items-end gap-6 md:grid-cols-[1fr_auto]">
+      <section className="home-diary-welcome relative rounded-2xl border border-hairline/80 bg-sand-light px-5 py-6 sm:px-8 sm:py-8">
+        <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_280px] lg:gap-12">
           <div className="pb-2">
+            <p className="mb-4 flex items-center gap-2 text-xs font-medium text-brown/55">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#8b9b79]" aria-hidden />
+              {today.getFullYear()}년 {today.getMonth() + 1}월 {today.getDate()}일 {today.toLocaleDateString("ko-KR", { weekday: "long" })}
+              <span className="ml-1 rounded-sm bg-white/70 px-2 py-0.5 text-[11px] text-sand-ink">오늘의 페이지</span>
+            </p>
             <p className="text-sm font-semibold text-sand-ink">
               {greeting()}
-              {dayCount && ` · ${nameForms(child.name).와} 함께한 지 ${dayCount.toLocaleString()}일째`}
+
             </p>
-            <h1 className="mt-2 font-book text-[26px] font-bold leading-snug text-brown sm:text-4xl">
+            <h1 className="mt-2 font-display text-[28px] leading-snug text-brown sm:text-[32px]">
               {todayEntry ? (
                 <>
-                  오늘의 {child.name},
-                  <br className="sm:hidden" /> 잘 남겨두었어요
+                  {possessive(child.name)} 오늘,
+                  <br className="sm:hidden" /> 기록했어요
                 </>
               ) : (
                 <>
                   오늘 {possessive(child.name)} 하루는
-                  <br />
+                  <br className="sm:hidden" />{" "}
                   어땠나요?
                 </>
               )}
             </h1>
             <p className="mt-3 max-w-md text-[15px] leading-relaxed text-brown/65">
               {todayEntry
-                ? "남긴 기록은 언제든 다시 꾸미고 고칠 수 있어요. 쌓인 하루들은 나중에 한 권의 그림동화가 돼요."
-                : "사진 한 장, 한 줄이면 충분해요. 오늘의 작은 순간이 언젠가 아이의 동화 속 한 장면이 돼요."}
+                ? "오늘 남긴 글과 사진을 확인하거나 이어서 쓸 수 있어요."
+                : "오늘 기억해 두고 싶은 말이나 행동이 있었나요? 잊기 전에 짧게 적어 두세요."}
             </p>
-            <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
+            <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
               <Link
                 to={`/diary/${todayStr}`}
-                className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-brown px-6 text-base font-semibold text-white shadow-sm transition-colors hover:bg-brown/90"
+                className="inline-flex min-h-14 items-center justify-center gap-2 rounded-lg bg-sand px-6 text-base font-semibold text-brown transition-colors hover:bg-sand-strong"
               >
                 <PenLine size={19} aria-hidden />
                 {todayEntry ? "오늘 기록 보기" : "오늘 기록 남기기"}
               </Link>
               <Link
                 to="/storybooks/new"
-                className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-white px-6 text-base font-semibold text-brown shadow-sm ring-1 ring-hairline transition-colors hover:bg-canvas"
+                className="inline-flex min-h-14 items-center justify-center gap-2 rounded-lg bg-white px-6 text-base font-semibold text-brown shadow-sm ring-1 ring-hairline transition-colors hover:bg-canvas"
               >
-                <Wand2 size={19} aria-hidden />
+                <BookPlus size={19} aria-hidden />
                 그림동화 만들기
               </Link>
             </div>
           </div>
-          <img
-            src={art.full}
-            alt=""
-            className="animate-bob pointer-events-none mx-auto -mb-6 h-56 w-auto mix-blend-multiply soft-edges sm:h-72 md:mr-6"
-          />
+
+          <div className="home-memory-note relative mx-auto w-full max-w-[320px] bg-white px-5 pb-4 pt-5 lg:rotate-2">
+            <div className="mb-4 flex items-center justify-between gap-3 border-b border-hairline/70 pb-3">
+              <p className="font-handwriting text-lg text-brown">{possessive(child.name)} 작은 순간들</p>
+              <span className="text-lg text-[#b78e7d]" aria-hidden>♡</span>
+            </div>
+            {latestEntry ? (
+              <Link to={`/diary/${latestEntry.date}`} className="group block rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sand-ink">
+                {latestEntry.photos.length > 0 && (
+                  <div className={`mb-3 grid gap-2 ${latestEntry.photos.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}>
+                    {latestEntry.photos.slice(0, 2).map((photo) => (
+                      <img key={photo.id} src={photo.url} alt="최근 일상 기록 사진" className="aspect-[16/9] w-full rounded-sm object-cover" />
+                    ))}
+                  </div>
+                )}
+                <p className="line-clamp-2 text-sm leading-relaxed text-brown/75">{latestEntry.text || "사진으로 남겨 둔 소중한 하루"}</p>
+                <div className="mt-3 flex items-center justify-between text-[11px] text-brown/45">
+                  <span>{latestEntry.date.replaceAll("-", ".")}</span>
+                  <span className="flex items-center gap-1 group-hover:text-sand-ink">다시 펼쳐 보기 <ArrowRight size={12} aria-hidden /></span>
+                </div>
+              </Link>
+            ) : (
+              <div className="home-empty-note py-3">
+                <p className="font-handwriting text-xl leading-loose text-brown/65">오늘 한 말, 좋아한 놀이,
+처음 해낸 작은 일.</p>
+                <Link to={`/diary/${todayStr}`} className="mt-5 inline-flex items-center gap-1 text-xs font-medium text-sand-ink">첫 추억 남기기 <ArrowRight size={13} aria-hidden /></Link>
+              </div>
+            )}
+            {dayCount && <p className="mt-4 border-t border-hairline/60 pt-3 text-center text-[11px] text-brown/50">{nameForms(child.name).와} 함께한 지 <span className="font-semibold text-sand-ink">{dayCount.toLocaleString()}일</span></p>}
+          </div>
         </div>
       </section>
 
       {/* 통계 */}
-      <section className="mt-4 grid grid-cols-2 gap-3 sm:mt-6 lg:grid-cols-4" aria-label="기록 요약">
+      <section className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="기록 요약">
         {recentQuery.isPending ? (
           Array.from({ length: 4 }, (_, i) => <Skeleton key={i} className="h-[92px]" />)
         ) : recentQuery.isError ? (
@@ -146,17 +175,17 @@ export default function AppHome() {
           />
         ) : (
           <>
-            <Stat icon={<Flame size={18} />} tone="bg-blush text-[#b55d4c]" label="연속 기록" value={`${streak}일`} hint={streak > 0 ? "꾸준함이 쌓이고 있어요" : "오늘부터 시작해요"} />
-            <Stat icon={<CalendarDays size={18} />} tone="bg-ocean-light text-ocean-deep" label="이번 달 기록" value={`${monthCount}개`} />
-            <Stat icon={<NotebookPen size={18} />} tone="bg-sand-light text-sand-ink" label="최근 두 달" value={`${recentCount}개`} />
-            <Stat icon={<BookOpen size={18} />} tone="bg-forest-light text-forest" label="완성한 동화" value={`${completedBooks.length}권`} />
+            <Stat icon={<Flame size={18} />} label="연속 기록" value={`${streak}일`} hint={streak > 0 ? "최근 연속 작성일" : "오늘부터 시작해요"} />
+            <Stat icon={<CalendarDays size={18} />} label="이번 달 기록" value={`${monthCount}개`} />
+            <Stat icon={<NotebookPen size={18} />} label="최근 두 달" value={`${recentCount}개`} />
+            <Stat icon={<BookOpen size={18} />} label="완성한 동화" value={`${completedBooks.length}권`} />
           </>
         )}
       </section>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
         {/* 캘린더 / 모아보기 */}
-        <section className="rounded-[28px] bg-white p-4 shadow-card ring-1 ring-hairline/60 sm:p-6">
+        <section className="rounded-xl bg-white p-4 ring-1 ring-hairline sm:p-6">
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-1">
               <button
@@ -237,13 +266,13 @@ export default function AppHome() {
 
         <aside className="space-y-6">
           {/* 동화 만들기 제안 */}
-          <section className="overflow-hidden rounded-[28px] bg-white shadow-card ring-1 ring-hairline/60">
-            <div className="relative bg-ocean-light/60 px-5 pt-5">
+          <section className="overflow-hidden rounded-xl bg-white ring-1 ring-hairline">
+            <div className="relative bg-paper px-5 pt-5">
               <p className="text-xs font-semibold text-ocean-deep">이번 주 기록 {lastWeekCount}개</p>
               <p className="mt-1 whitespace-pre-line font-book text-xl font-bold leading-snug text-brown">
-                {lastWeekCount > 0 ? "이번 주 이야기로\n그림동화를 만들어 볼까요?" : "기록이 모이면\n그림동화가 돼요"}
+                {lastWeekCount > 0 ? "이번 주 기록을\n그림책으로 엮어 보세요" : "기록이 모이면\n그림동화가 돼요"}
               </p>
-              <img src={brandArt.makingBook} alt="" className="mx-auto mt-2 h-40 w-auto mix-blend-multiply soft-edges" />
+              <img src={brandArt.makingBook} alt="" className="mx-auto mt-2 h-28 w-auto mix-blend-multiply soft-edges" />
             </div>
             <div className="p-5">
               <p className="text-sm leading-relaxed text-brown/60">
@@ -251,16 +280,16 @@ export default function AppHome() {
               </p>
               <Link
                 to="/storybooks/new"
-                className="mt-4 flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-sand text-[15px] font-semibold text-brown transition-colors hover:bg-sand-strong"
+                className="mt-4 flex min-h-12 items-center justify-center gap-2 rounded-lg bg-sand text-[15px] font-semibold text-brown transition-colors hover:bg-sand-strong"
               >
-                <Wand2 size={17} aria-hidden />
+                <BookPlus size={17} aria-hidden />
                 동화 만들러 가기
               </Link>
             </div>
           </section>
 
           {/* 최근 동화 */}
-          <section className="rounded-[28px] bg-white p-5 shadow-card ring-1 ring-hairline/60">
+          <section className="rounded-xl bg-white p-5 ring-1 ring-hairline">
             <div className="flex items-center justify-between">
               <h2 className="text-base font-bold text-brown">{possessive(child.name)} 책장</h2>
               <Link to="/storybooks" className="flex min-h-9 items-center gap-0.5 text-sm font-medium text-ocean-deep hover:underline">
@@ -302,20 +331,18 @@ export default function AppHome() {
 
 function Stat({
   icon,
-  tone,
   label,
   value,
   hint,
 }: {
   icon: React.ReactNode;
-  tone: string;
   label: string;
   value: string;
   hint?: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-3xl bg-white p-4 shadow-card ring-1 ring-hairline/60">
-      <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${tone}`}>{icon}</span>
+    <div className="flex items-center gap-3 rounded-lg border border-hairline bg-white px-4 py-4 sm:px-5">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center text-sand-ink">{icon}</span>
       <div className="min-w-0">
         <p className="text-xs font-medium text-brown/55">{label}</p>
         <p className="text-xl font-bold text-brown">{value}</p>
@@ -328,14 +355,14 @@ function Stat({
 function RecentMoments({ entries }: { entries: DiaryEntry[] }) {
   const recent = [...entries].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
   return (
-    <section className="rounded-[28px] bg-white p-5 shadow-card ring-1 ring-hairline/60">
-      <h2 className="text-base font-bold text-brown">최근의 순간들</h2>
+    <section className="rounded-xl bg-white p-5 ring-1 ring-hairline">
+      <h2 className="text-base font-bold text-brown">최근 기록</h2>
       <ul className="mt-3 space-y-1">
         {recent.map((entry) => {
           const [, m, d] = entry.date.split("-").map(Number);
           return (
             <li key={entry.date}>
-              <Link to={`/diary/${entry.date}`} className="flex items-center gap-3 rounded-2xl p-2 hover:bg-sand-light/60">
+              <Link to={`/diary/${entry.date}`} className="flex items-center gap-3 rounded-lg p-2 hover:bg-sand-light/60">
                 {entry.photos[0] ? (
                   <img src={entry.photos[0].url} alt="" loading="lazy" className="h-14 w-14 shrink-0 rounded-xl object-cover" />
                 ) : (

@@ -48,7 +48,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             <div
               key={toast.id}
               role={toast.kind === "error" ? "alert" : "status"}
-              className="animate-toast-in pointer-events-auto flex w-full max-w-sm items-center gap-2.5 rounded-2xl bg-white px-4 py-3 text-sm text-brown shadow-lg ring-1 ring-black/5"
+              className="animate-toast-in pointer-events-auto flex w-full max-w-sm items-center gap-2.5 rounded-lg bg-white px-4 py-3 text-sm text-brown shadow-lg ring-1 ring-black/5"
             >
               <Icon size={20} className={`shrink-0 ${className}`} aria-hidden />
               <p className="flex-1">{toast.message}</p>

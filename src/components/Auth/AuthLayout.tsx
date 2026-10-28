@@ -17,11 +17,10 @@ export default function AuthLayout({ title, description, illustration = brandArt
       <aside className="relative hidden overflow-hidden bg-sand-light lg:flex lg:flex-col lg:justify-between lg:p-12">
         <Brand to="/intro" />
         <div className="relative">
-          <div className="absolute inset-10 rounded-full bg-white/50 blur-2xl" aria-hidden />
           <img src={illustration} alt="" className="relative mx-auto w-full max-w-md mix-blend-multiply soft-edges" />
         </div>
         <div>
-          <p className="font-book text-2xl font-bold leading-snug text-brown">
+          <p className="font-display text-2xl leading-snug text-brown">
             우리 아이의 하루가,
             <br />
             한 권의 동화로.
@@ -36,7 +35,7 @@ export default function AuthLayout({ title, description, illustration = brandArt
         </div>
         <div className="mx-auto w-full max-w-[400px] flex-1 lg:flex-none">
           <img src={illustration} alt="" className="mx-auto mt-4 h-40 w-auto mix-blend-multiply soft-edges lg:hidden" />
-          <h1 className="mt-4 font-book text-[26px] font-bold leading-snug text-brown lg:mt-0">{title}</h1>
+          <h1 className="mt-4 font-display text-[30px] leading-snug text-brown lg:mt-0">{title}</h1>
           <p className="mt-2 text-[15px] leading-relaxed text-brown/60">{description}</p>
           <div className="mt-8">{children}</div>
           <p className="mt-10 flex items-center justify-center gap-1.5 text-xs text-brown/40">

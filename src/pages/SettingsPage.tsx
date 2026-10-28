@@ -39,7 +39,7 @@ export default function SettingsPage() {
     <div className="mx-auto max-w-3xl px-4 pt-6 sm:px-6 sm:pt-10">
       <PageHeader eyebrow="설정" title="우리 아이와 계정" />
 
-      <section className="rounded-[28px] bg-white p-5 shadow-card ring-1 ring-hairline/60 sm:p-7">
+      <section className="rounded-xl bg-white p-5 ring-1 ring-hairline sm:p-7">
         <div className="flex items-center gap-4">
           <CharacterAvatar gender={child.gender} className="h-16 w-16" />
           <div>
@@ -76,7 +76,7 @@ export default function SettingsPage() {
         </form>
       </section>
 
-      <section className="mt-5 rounded-[28px] bg-white p-5 shadow-card ring-1 ring-hairline/60 sm:p-7">
+      <section className="mt-5 rounded-xl bg-white p-5 ring-1 ring-hairline sm:p-7">
         <h2 className="text-lg font-bold text-brown">기록 보관과 개인정보</h2>
         <ul className="mt-4 space-y-4 text-sm leading-relaxed">
           <li className="flex gap-3">
@@ -107,13 +107,13 @@ export default function SettingsPage() {
         </ul>
       </section>
 
-      <section className="mt-5 rounded-[28px] bg-white p-5 shadow-card ring-1 ring-hairline/60 sm:p-7">
+      <section className="mt-5 rounded-xl bg-white p-5 ring-1 ring-hairline sm:p-7">
         <h2 className="text-lg font-bold text-brown">계정</h2>
         <p className="mt-1 text-sm text-brown/55">{user?.email}</p>
         <div className="mt-4 flex flex-col gap-2 sm:flex-row">
           <Link
             to="/intro"
-            className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-white text-[15px] font-semibold text-brown ring-1 ring-hairline hover:bg-sand-light"
+            className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-white text-[15px] font-semibold text-brown ring-1 ring-hairline hover:bg-sand-light"
           >
             <Info size={17} aria-hidden />
             서비스 소개 보기

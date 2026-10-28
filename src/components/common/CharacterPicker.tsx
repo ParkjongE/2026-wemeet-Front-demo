@@ -25,7 +25,7 @@ export default function CharacterPicker({
             <label
               key={option.value}
               className={[
-                "relative flex cursor-pointer flex-col items-center rounded-3xl border-2 bg-canvas px-2 pb-3 pt-2 transition-all has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ocean",
+                "relative flex cursor-pointer flex-col items-center rounded-xl border-2 bg-canvas px-2 pb-3 pt-2 transition-all has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ocean",
                 active ? "border-sand bg-sand-light shadow-card" : "border-hairline hover:border-sand/60",
               ].join(" ")}
             >

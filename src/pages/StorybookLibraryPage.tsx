@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { CircleAlert, Plus, Wand2 } from "lucide-react";
+import { CircleAlert, Plus, BookPlus } from "lucide-react";
 import { errorMessage } from "../api";
 import { useCurrentChild } from "../auth/authContext";
 import PageHeader from "../components/layout/PageHeader";
@@ -20,7 +20,7 @@ function BookCard({ book }: { book: StorybookSummary }) {
       <div className="relative">
         <div
           className={[
-            "relative aspect-[2/3] overflow-hidden rounded-l-[4px] rounded-r-[10px] shadow-lift transition-all duration-300 group-hover:-translate-y-1.5 group-hover:rotate-[-1deg]",
+            "relative aspect-[2/3] overflow-hidden rounded-l-[4px] rounded-r-[10px] shadow-lift transition-all duration-300 group-hover:-translate-y-1",
             inProgress || failed ? "bg-sand-light" : "bg-sand-soft",
           ].join(" ")}
         >
@@ -33,7 +33,7 @@ function BookCard({ book }: { book: StorybookSummary }) {
             </>
           ) : inProgress ? (
             <div className="flex h-full flex-col items-center justify-center gap-3 px-4 text-center">
-              <img src={brandArt.makingBook} alt="" className="animate-bob w-[85%] mix-blend-multiply soft-edges" />
+              <img src={brandArt.makingBook} alt="" className="w-[85%] mix-blend-multiply soft-edges" />
               <p className="text-sm font-semibold text-sand-ink">{book.status === "queued" ? "곧 그리기 시작해요" : "삽화를 그리는 중"}</p>
               <div className="h-1.5 w-2/3 overflow-hidden rounded-full bg-white">
                 <div className={`h-full rounded-full bg-sand ${book.status === "queued" ? "w-1/4" : "w-2/3"} transition-all`} />
@@ -79,7 +79,7 @@ export default function StorybookLibraryPage() {
           books.length > 0 && (
             <Link
               to="/storybooks/new"
-              className="hidden min-h-12 items-center gap-1.5 rounded-2xl bg-sand px-5 text-[15px] font-semibold text-brown shadow-sm hover:bg-sand-strong sm:flex"
+              className="hidden min-h-12 items-center gap-1.5 rounded-lg bg-sand px-5 text-[15px] font-semibold text-brown shadow-sm hover:bg-sand-strong sm:flex"
             >
               <Plus size={18} aria-hidden />새 동화 만들기
             </Link>
@@ -99,7 +99,7 @@ export default function StorybookLibraryPage() {
           onRetry={() => void storybooksQuery.refetch()}
         />
       ) : books.length === 0 ? (
-        <div className="mx-auto flex max-w-lg flex-col items-center rounded-[28px] bg-white px-6 pb-10 pt-6 text-center shadow-card ring-1 ring-hairline/60">
+        <div className="mx-auto flex max-w-lg flex-col items-center rounded-xl bg-white px-6 pb-10 pt-6 text-center ring-1 ring-hairline">
           <img src={brandArt.emptyLibrary} alt="" className="h-56 w-auto mix-blend-multiply soft-edges" />
           <p className="mt-2 font-book text-2xl font-bold text-brown">첫 번째 그림책을 기다리고 있어요</p>
           <p className="mt-2 text-[15px] leading-relaxed text-brown/60">
@@ -109,9 +109,9 @@ export default function StorybookLibraryPage() {
           </p>
           <Link
             to="/storybooks/new"
-            className="mt-6 flex min-h-14 items-center gap-2 rounded-2xl bg-sand px-7 text-base font-semibold text-brown shadow-sm hover:bg-sand-strong"
+            className="mt-6 flex min-h-14 items-center gap-2 rounded-lg bg-sand px-7 text-base font-semibold text-brown shadow-sm hover:bg-sand-strong"
           >
-            <Wand2 size={18} aria-hidden />첫 동화 만들기
+            <BookPlus size={18} aria-hidden />첫 동화 만들기
           </Link>
         </div>
       ) : (
@@ -125,7 +125,7 @@ export default function StorybookLibraryPage() {
             <li>
               <Link
                 to="/storybooks/new"
-                className="flex aspect-[2/3] flex-col items-center justify-center gap-3 rounded-[10px] border-2 border-dashed border-brown/15 text-center transition-colors hover:border-sand hover:bg-sand-light/50"
+                className="flex aspect-[2/3] flex-col items-center justify-center gap-3 rounded-[10px] border border-brown/15 text-center transition-colors hover:border-sand hover:bg-sand-light/50"
               >
                 <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sand-light text-sand-ink">
                   <Plus size={22} aria-hidden />

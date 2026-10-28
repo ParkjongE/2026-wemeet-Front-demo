@@ -20,7 +20,7 @@ export default function LoginPage() {
       />
 
       {USE_MOCK && (
-        <div className="mt-6 rounded-2xl bg-sand-light p-4">
+        <div className="mt-6 rounded-lg bg-sand-light p-4">
           <p className="flex items-center gap-1.5 text-sm font-semibold text-brown">
             <Sparkles size={16} className="text-sand-ink" aria-hidden />
             가입 없이 둘러보기

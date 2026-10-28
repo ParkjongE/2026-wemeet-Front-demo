@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Lock, NotebookPen, PenLine, Sparkles, Wand2 } from "lucide-react";
+import { Lock, NotebookPen, PenLine, Info, BookPlus, ArrowRight, ArrowLeft, Check } from "lucide-react";
 import { USE_MOCK, errorMessage } from "../api";
 import { useCurrentChild } from "../auth/authContext";
 import PageHeader from "../components/layout/PageHeader";
 import Button from "../components/common/Button";
 import ErrorBox from "../components/common/ErrorBox";
 import Skeleton from "../components/common/Skeleton";
+import ConfirmDialog from "../components/common/ConfirmDialog";
+import { useUnsavedChangesGuard } from "../hooks/useUnsavedChangesGuard";
 import {
   LESSON_TAGS,
   PARENT_MESSAGE_EXAMPLES,
@@ -44,10 +46,10 @@ const LESSON_HINT: Record<string, string> = {
   끈기: "포기하지 않는 힘",
 };
 
-function Step({ n, title, optional, children }: { n: number; title: string; optional?: boolean; children: React.ReactNode }) {
+function Step({ n, title, optional, active, children }: { n: number; title: string; optional?: boolean; active: boolean; children: React.ReactNode }) {
   return (
-    <section className="rounded-[28px] bg-white p-5 shadow-card ring-1 ring-hairline/60 sm:p-7">
-      <h2 className="flex items-center gap-2.5 text-base font-bold text-brown">
+    <section hidden={!active} className="service-panel p-5 sm:p-8">
+      <h2 className="flex items-center gap-2.5 text-xl font-semibold text-brown">
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-sand-light text-sm text-sand-ink">{n}</span>
         {title}
         {optional && <span className="text-sm font-medium text-brown/40">선택</span>}
@@ -70,7 +72,13 @@ export default function StorybookNewPage() {
     draft?.periodStart ?? addDays(today, -(STORY_PERIOD_DEFAULT_DAYS - 1)),
   );
   const [submitted, setSubmitted] = useState(false);
+  const [step, setStep] = useState(1);
+  const stepHeading = useRef<HTMLHeadingElement>(null);
+  const messageInput = useRef<HTMLTextAreaElement>(null);
+  const goStep = (next: number) => { setStep(next); requestAnimationFrame(() => stepHeading.current?.focus()); };
   const createStorybook = useCreateStorybook(child.id);
+
+  const { blocker, allowLeave } = useUnsavedChangesGuard(parentMessage !== (draft?.parentMessage ?? "") || lessonTag !== (draft?.lessonTag ?? null));
 
   const messageLength = parentMessage.trim().length;
   const messageError =
@@ -109,10 +117,11 @@ export default function StorybookNewPage() {
 
   const handleSubmit = () => {
     setSubmitted(true);
-    if (messageError || !canSubmit) return;
+    if (messageError) { goStep(2); requestAnimationFrame(() => messageInput.current?.focus()); return; }
+    if (!canSubmit) return;
     createStorybook.mutate(
       { periodStart, periodEnd, parentMessage: parentMessage.trim(), lessonTag },
-      { onSuccess: (summary) => navigate(`/storybooks/${summary.id}`, { replace: true }) },
+      { onSuccess: (summary) => { allowLeave(); navigate(`/storybooks/${summary.id}`, { replace: true }); } },
     );
   };
 
@@ -123,27 +132,38 @@ export default function StorybookNewPage() {
     <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-10">
       <PageHeader
         eyebrow="그림동화 만들기"
-        title={`${n.에게} 들려줄 이야기를 지어요`}
-        description="부모님이 전하고 싶은 마음을 중심에 두고, 남겨둔 기록을 엮어 한 권의 그림책을 만들어요."
+        title={`${possessive(child.name)} 이야기를 한 권으로`}
+        description="함께 보낸 날을 고르고, 아이에게 건넬 말을 적어 주세요."
       />
 
+      <nav aria-label="동화 만들기 단계" className="mb-8 grid grid-cols-3 border-b border-hairline">
+        {["기록 고르기", "마음 쓰기", "확인하고 만들기"].map((label, i) => (
+          <button key={label} type="button" disabled={i + 1 > step} onClick={() => goStep(i + 1)} aria-current={step === i + 1 ? "step" : undefined}
+            className={`flex min-h-16 items-center justify-center gap-2 border-b-2 px-1 text-xs sm:text-sm ${step === i + 1 ? "border-sand-ink font-semibold text-brown" : "border-transparent text-brown/50"}`}>
+            <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${step >= i + 1 ? "bg-sand-light text-sand-ink" : "bg-paper"}`}>{step > i + 1 ? <Check size={13} /> : i + 1}</span>{label}
+          </button>
+        ))}
+      </nav>
+      <h2 ref={stepHeading} tabIndex={-1} className="sr-only">{step}단계: {["기록 고르기", "마음 쓰기", "확인하고 만들기"][step - 1]}</h2>
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
         <div className="space-y-5">
-          <Step n={1} title="아이에게 전하고 싶은 마음">
+          <Step n={2} active={step === 2} title="어떤 마음을 전하고 싶나요?">
+            <p className="mb-5 text-sm text-brown/65">잘 쓴 문장이 아니어도 괜찮아요. 아이에게 평소 하던 말처럼 적어 주세요.</p>
             <label htmlFor="parent-message" className="sr-only">
               전하고 싶은 메시지
             </label>
             <textarea
               id="parent-message"
+              ref={messageInput}
               value={parentMessage}
               onChange={(e) => setParentMessage(e.target.value)}
               rows={4}
-              maxLength={PARENT_MESSAGE_MAX + 50}
+              maxLength={PARENT_MESSAGE_MAX}
               placeholder={`예) ${PARENT_MESSAGE_EXAMPLES[0]}`}
               aria-invalid={submitted && !!messageError}
               aria-describedby="parent-message-help"
               className={[
-                "paper-lined w-full resize-none rounded-2xl border py-3 pl-12 pr-5 font-handwriting text-xl leading-[36px] text-brown outline-none transition-colors placeholder:font-body placeholder:text-[15px] placeholder:text-brown/35 focus:ring-4",
+                "w-full resize-y rounded-xl border bg-canvas p-5 font-handwriting text-xl leading-[36px] text-brown outline-none transition-colors placeholder:font-body placeholder:text-[15px] placeholder:text-brown/35 focus:ring-4",
                 submitted && messageError
                   ? "border-error focus:ring-error/15"
                   : "border-hairline focus:border-ocean focus:ring-ocean/15",
@@ -157,7 +177,7 @@ export default function StorybookNewPage() {
                 {messageLength}/{PARENT_MESSAGE_MAX}
               </span>
             </div>
-            <p className="mb-2 mt-4 text-xs font-semibold text-brown/50">이런 마음은 어때요?</p>
+            <details className="mt-5"><summary className="cursor-pointer text-sm font-medium text-sand-ink">막막할 땐 예시 문장 살펴보기</summary>
             <div className="flex flex-wrap gap-2">
               {PARENT_MESSAGE_EXAMPLES.map((example) => (
                 <button
@@ -170,9 +190,12 @@ export default function StorybookNewPage() {
                 </button>
               ))}
             </div>
+            </details>
           </Step>
 
-          <Step n={2} title="이야기의 주제" optional>
+          <Step n={3} active={step === 3} title="마지막으로 확인해 주세요">
+            <div className="mb-6 rounded-xl bg-canvas p-4"><p className="service-eyebrow">아이에게 전할 마음</p><p className="mt-2 whitespace-pre-wrap font-handwriting text-lg">{parentMessage}</p><button type="button" onClick={() => goStep(2)} className="mt-2 text-xs text-ocean-deep underline underline-offset-4">메시지 수정</button></div>
+            <p className="mb-3 text-sm font-semibold">이야기의 주제 <span className="ml-1 font-normal text-brown/50">선택</span></p>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
               {LESSON_TAGS.map((tag) => {
                 const active = lessonTag === tag;
@@ -183,7 +206,7 @@ export default function StorybookNewPage() {
                     aria-pressed={active}
                     onClick={() => setLessonTag(active ? null : tag)}
                     className={[
-                      "flex min-h-16 flex-col items-center justify-center rounded-2xl px-2 text-center transition-colors",
+                      "flex min-h-16 flex-col items-center justify-center rounded-lg px-2 text-center transition-colors",
                       active ? "bg-brown text-white" : "bg-canvas text-brown ring-1 ring-hairline/70 hover:bg-sand-light",
                     ].join(" ")}
                   >
@@ -196,7 +219,8 @@ export default function StorybookNewPage() {
             <p className="mt-2 text-xs text-brown/45">고르지 않으면 적어 주신 마음에 가장 어울리는 주제로 지어요.</p>
           </Step>
 
-          <Step n={3} title="담을 기록의 기간">
+          <Step n={1} active={step === 1} title="어느 날의 이야기를 담을까요?">
+            <p className="mb-5 text-sm text-brown/65">선택한 기간의 기록을 함께 엮어요. 기록이 하나만 있어도 시작할 수 있어요.</p>
             <div className="flex flex-wrap gap-2">
               {STORY_PERIOD_PRESETS.map((days) => (
                 <button
@@ -255,27 +279,18 @@ export default function StorybookNewPage() {
                     <p className="text-sm font-semibold text-brown">
                       이 기간의 기록 <span className="text-ocean-deep">{entries.length}개</span>를 이야기 재료로 써요
                     </p>
-                    <div className="scrollbar-none -mx-1 mt-3 flex gap-2 overflow-x-auto px-1 pb-1">
+                    <ul className="mt-3 max-h-72 divide-y divide-hairline overflow-y-auto">
                       {entries.map((entry) => (
-                        <span
-                          key={entry.date}
-                          title={entry.text}
-                          className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-sand-light ring-1 ring-hairline/60"
-                        >
-                          {entry.photos[0] ? (
-                            <img src={entry.photos[0].url} alt="" loading="lazy" className="h-full w-full object-cover" />
-                          ) : (
-                            <NotebookPen size={18} className="text-brown/50" aria-hidden />
-                          )}
-                          <span className="absolute bottom-0 inset-x-0 bg-black/35 text-center text-[10px] font-semibold text-white">
-                            {Number(entry.date.slice(5, 7))}.{Number(entry.date.slice(8))}
-                          </span>
-                        </span>
+                        <li key={entry.date} className="flex items-center gap-3 py-3">
+                          {entry.photos[0] ? <img src={entry.photos[0].url} alt="" className="h-12 w-12 shrink-0 rounded-lg object-cover" /> : <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-paper"><NotebookPen size={18} /></span>}
+                          <div className="min-w-0"><p className="text-xs text-brown/60">{formatPeriod(entry.date, entry.date)}</p><p className="mt-1 line-clamp-2 text-sm">{entry.text || "사진으로 남긴 하루"}</p></div>
+                          <Check size={16} className="ml-auto shrink-0 text-sand-ink" aria-label="이야기에 포함" />
+                        </li>
                       ))}
-                    </div>
+                    </ul>
                   </>
                 ) : (
-                  <div className="flex flex-col items-center gap-2 rounded-2xl bg-sand-light/70 p-5 text-center">
+                  <div className="flex flex-col items-center gap-2 rounded-lg bg-sand-light/70 p-5 text-center">
                     <p className="text-sm font-semibold text-brown">이 기간에는 아직 기록이 없어요</p>
                     <p className="text-xs text-brown/60">기록이 하나 이상 있어야 동화를 만들 수 있어요.</p>
                     <Link
@@ -290,13 +305,18 @@ export default function StorybookNewPage() {
               </div>
             )}
           </Step>
+          <div className="flex items-center justify-between gap-3 py-3">
+            <Button variant="ghost" onClick={() => goStep(step - 1)} disabled={step === 1 || createStorybook.isPending}><ArrowLeft size={16} />이전</Button>
+            {step < 3 && <Button size="lg" disabled={step === 1 && !canSubmit} onClick={() => { if (step === 2 && messageError) { setSubmitted(true); messageInput.current?.focus(); return; } goStep(step + 1); }}>{step === 1 ? "이 기록으로 계속" : "완성 전 확인하기"}<ArrowRight size={16} /></Button>}
+          </div>
         </div>
 
         {/* 미리보기 + 만들기 */}
-        <aside className="lg:sticky lg:top-24">
-          <div className="overflow-hidden rounded-[28px] bg-white shadow-card ring-1 ring-hairline/60">
+        <aside className={`${step < 3 ? "hidden lg:block" : ""} lg:sticky lg:top-24`}>
+          <div className="service-panel overflow-hidden">
+            <div className="border-b border-hairline px-5 py-4"><p className="service-eyebrow">만들어질 그림책</p><p className="mt-1 text-sm text-brown/60">선택한 내용을 여기서 확인하세요</p></div>
             <div className="relative flex justify-center bg-sand-light px-6 pb-6 pt-8">
-              <div className="relative aspect-[2/3] w-44 overflow-hidden rounded-l-[4px] rounded-r-[10px] bg-paper shadow-lift">
+              <div className="relative aspect-[2/3] w-32 overflow-hidden rounded-l-[4px] rounded-r-[10px] bg-paper shadow-lift">
                 <img src={art.full} alt="" className="absolute inset-x-0 bottom-0 mx-auto h-[78%] w-auto mix-blend-multiply soft-edges" />
                 <span className="absolute inset-x-3 top-4 text-center font-book text-[13px] font-bold leading-snug text-brown">
                   {n.와} {lessonTag ? LESSON_HINT[lessonTag] : "특별한 하루"}
@@ -304,6 +324,7 @@ export default function StorybookNewPage() {
                 <span className="absolute inset-y-0 left-0 w-[7%] bg-gradient-to-r from-black/20 to-transparent" />
               </div>
             </div>
+            <p className="bg-sand-light pb-4 text-center text-xs text-brown/60">표지 예시 · 완성된 제목과 그림은 달라져요</p>
             <div className="p-5">
               <dl className="space-y-2 text-sm">
                 <div className="flex justify-between gap-3">
@@ -330,12 +351,13 @@ export default function StorybookNewPage() {
                   {errorMessage(createStorybook.error)}
                 </p>
               )}
-              <Button size="lg" onClick={handleSubmit} disabled={!canSubmit} loading={createStorybook.isPending} className="mt-5 w-full">
-                <Wand2 size={18} aria-hidden />
-                {possessive(child.name)} 그림동화 만들기
-              </Button>
+              {step === 3 && <Button size="lg" onClick={handleSubmit} disabled={!canSubmit} loading={createStorybook.isPending} className="mt-5 w-full">
+                <BookPlus size={18} aria-hidden />
+                그림동화 만들기
+              </Button>}
+              {step === 3 && <p className="mt-2 text-xs text-brown/60">완성되면 동화 서재에서 다시 볼 수 있어요.</p>}
               <p className="mt-3 flex items-start gap-1.5 text-xs leading-relaxed text-brown/50">
-                <Sparkles size={14} className="mt-0.5 shrink-0 text-sand-ink" aria-hidden />
+                <Info size={14} className="mt-0.5 shrink-0 text-sand-ink" aria-hidden />
                 {USE_MOCK ? "체험 버전에서는 미리 그려 둔 삽화로 약 15초 뒤 완성돼요." : "몇 분 안에 완성돼요. 그동안 다른 화면을 봐도 괜찮아요."}
               </p>
               <p className="mt-2 flex items-start gap-1.5 text-xs leading-relaxed text-brown/50">
@@ -346,6 +368,7 @@ export default function StorybookNewPage() {
           </div>
         </aside>
       </div>
+      <ConfirmDialog open={blocker.state === "blocked"} title="작성 중인 마음이 있어요" description="화면을 나가면 지금 적은 메시지와 선택한 주제가 사라져요." confirmLabel="나가기" cancelLabel="계속 만들기" onConfirm={() => blocker.proceed?.()} onCancel={() => blocker.reset?.()} />
     </div>
   );
 }

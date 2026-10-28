@@ -49,7 +49,7 @@ export default function ConfirmDialog({
         // 바깥(backdrop)을 누르면 닫는다.
         if (e.target === e.currentTarget && !pending) onCancel();
       }}
-      className="m-auto w-[calc(100%-2rem)] max-w-sm rounded-3xl bg-white p-0 text-brown shadow-xl backdrop:bg-brown/40 backdrop:backdrop-blur-[2px]"
+      className="m-auto w-[calc(100%-2rem)] max-w-sm rounded-xl bg-white p-0 text-brown shadow-xl backdrop:bg-brown/40 backdrop:backdrop-blur-[2px]"
     >
       <div className="p-6">
         <h2 id={titleId} className="text-lg font-bold">

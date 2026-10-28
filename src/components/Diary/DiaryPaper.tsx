@@ -19,7 +19,7 @@ export function DiaryPaper({ paper, header, children, overlay, className = "" }:
   return (
     <div
       className={[
-        "relative overflow-visible rounded-[22px] shadow-lift ring-1 ring-black/[0.04] [container-type:inline-size]",
+        "relative overflow-visible rounded-xl shadow-card ring-1 ring-hairline [container-type:inline-size]",
         paperClass(paper),
         className,
       ].join(" ")}
@@ -42,10 +42,10 @@ export function DiaryPaper({ paper, header, children, overlay, className = "" }:
 export function DiaryDateHeading({ date, right }: { date: string; right?: ReactNode }) {
   const { year, month, day, weekday } = formatDiaryDate(date);
   return (
-    <div className="flex items-start justify-between gap-3 border-b-2 border-dashed border-brown/10 pb-4">
+    <div className="flex items-start justify-between gap-3 border-b border-hairline pb-4">
       <div>
         <p className="text-xs font-semibold tracking-wider text-brown/45">{year}</p>
-        <p className="font-handwriting text-[34px] font-bold leading-none text-brown">
+        <p className="font-display text-[30px] leading-snug text-brown">
           {month}월 {day}일
         </p>
         <p className="mt-1 text-sm text-brown/55">{weekday}</p>

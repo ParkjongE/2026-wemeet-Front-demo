@@ -69,7 +69,8 @@ export default function EditablePhotos({ items, frame, onAdd, onRemove, onRetry,
         addFiles(e.dataTransfer.files);
       }}
       className={[
-        "flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed text-center transition-colors",
+        "flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed text-center transition-colors",
+        items.length === 0 ? "min-h-32 py-4" : "aspect-square",
         dragging ? "border-sand bg-sand-light" : "border-brown/15 bg-white/70 hover:border-sand hover:bg-white",
       ].join(" ")}
     >
@@ -97,7 +98,7 @@ export default function EditablePhotos({ items, frame, onAdd, onRemove, onRetry,
         }}
       />
       {items.length === 0 ? (
-        <div className="mx-auto max-w-[260px]">{addTile}</div>
+        <div className="w-full">{addTile}</div>
       ) : (
         <ul className={`grid gap-5 ${items.length === 1 && !canAdd ? "mx-auto max-w-[62%] grid-cols-1" : "grid-cols-2 sm:grid-cols-3"}`}>
           {items.map((item, i) => {

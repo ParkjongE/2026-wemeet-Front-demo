@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { BookHeart, House, PenLine, Settings, Wand2 } from "lucide-react";
+import { BookHeart, House, PenLine, Settings, BookPlus } from "lucide-react";
 import { useCurrentChild } from "../../auth/authContext";
 import { todayString } from "../../utils/date";
 import CharacterAvatar from "../common/CharacterAvatar";
@@ -8,7 +8,7 @@ import Brand from "./Brand";
 const NAV = [
   { to: "/", label: "홈", icon: House, end: true },
   { to: "/storybooks", label: "동화 서재", icon: BookHeart, end: true },
-  { to: "/storybooks/new", label: "동화 만들기", icon: Wand2, end: true },
+  { to: "/storybooks/new", label: "동화 만들기", icon: BookPlus, end: true },
 ];
 
 // 로그인하고 아이가 있는 화면의 공통 틀. 넓은 화면은 위쪽 메뉴, 좁은 화면은 아래 탭을 쓴다.
@@ -20,7 +20,7 @@ export default function AppShell() {
 
   return (
     <div className="min-h-screen bg-canvas">
-      <header className="sticky top-0 z-30 border-b border-hairline/70 bg-canvas/85 backdrop-blur-md">
+      <header className="sticky top-0 z-30 border-b border-hairline/70 bg-canvas">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
           <Brand />
           <nav className="hidden items-center gap-1 md:flex" aria-label="주요 메뉴">
@@ -32,7 +32,7 @@ export default function AppShell() {
                 className={({ isActive }) =>
                   [
                     "flex min-h-11 items-center rounded-xl px-4 text-[15px] font-medium transition-colors",
-                    isActive ? "bg-sand-light text-brown" : "text-brown/60 hover:bg-sand-light/70 hover:text-brown",
+                    isActive ? "bg-sand-light text-sand-ink" : "text-brown/60 hover:bg-sand-light/70 hover:text-brown",
                   ].join(" ")
                 }
               >
@@ -77,14 +77,14 @@ export default function AppShell() {
               to={todayPath}
               aria-label="오늘 기록하기"
               className={[
-                "-mt-7 flex h-14 w-14 items-center justify-center rounded-2xl shadow-lift ring-4 ring-canvas transition-transform active:scale-95",
+                "flex h-11 w-11 items-center justify-center rounded-lg transition-transform active:scale-95",
                 onDiary ? "bg-brown text-white" : "bg-sand text-brown",
               ].join(" ")}
             >
               <PenLine size={24} aria-hidden />
             </NavLink>
           </div>
-          <TabLink to="/storybooks/new" label="만들기" icon={Wand2} end />
+          <TabLink to="/storybooks/new" label="만들기" icon={BookPlus} end />
           <TabLink to="/settings" label="설정" icon={Settings} end />
         </div>
       </nav>

@@ -26,7 +26,7 @@ export default function PageHeader({ title, description, backTo, actions, eyebro
           </button>
         )}
         {eyebrow && <p className="mb-1 text-sm font-semibold text-sand-ink">{eyebrow}</p>}
-        <h1 className="font-book text-2xl font-bold leading-snug text-brown sm:text-[28px]">{title}</h1>
+        <h1 className="font-display text-2xl leading-snug text-brown sm:text-[28px]">{title}</h1>
         {description && <p className="mt-1.5 text-[15px] leading-relaxed text-brown/60">{description}</p>}
       </div>
       {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}

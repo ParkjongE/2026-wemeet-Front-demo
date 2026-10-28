@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
-import { CalendarX, ChevronLeft, ChevronRight, CloudCheck, Lock, Pencil, ShieldCheck, Trash2 } from "lucide-react";
-import { errorMessage } from "../api";
+import { CalendarX, ChevronLeft, ChevronRight, CloudCheck, Lock, Pencil, ShieldCheck, Trash2, BookPlus, MessageCircle, Palette } from "lucide-react";
+import { USE_MOCK, errorMessage } from "../api";
 import { useCurrentChild } from "../auth/authContext";
 import DecorPanel from "../components/Diary/DecorPanel";
 import { DEFAULT_DECORATION } from "../components/Diary/decor";
@@ -69,15 +69,16 @@ export default function DiaryEntryPage() {
       <div className="mb-6 flex items-end justify-between gap-3">
         <div>
           <p className="text-sm font-semibold text-sand-ink">{possessive(child.name)} 하루</p>
-          <h1 className="mt-1 font-book text-2xl font-bold text-brown sm:text-[28px]">
+          <h1 className="mt-1 font-display text-[30px] text-brown sm:text-[28px]">
             {date === today ? "오늘의 기록" : `${formatMonthDay(date)}의 기록`}
           </h1>
+          <p className="mt-2 text-sm text-brown/60">사진 한 장, 오늘 들은 한마디. 기억하고 싶은 만큼 남겨 주세요.</p>
         </div>
         {dayNav}
       </div>
 
       {isFuture ? (
-        <div className="mx-auto flex max-w-md flex-col items-center gap-3 rounded-3xl bg-white p-10 text-center shadow-card">
+        <div className="mx-auto flex max-w-md flex-col items-center gap-3 rounded-xl bg-white p-10 text-center shadow-card">
           <CalendarX size={32} className="text-brown/35" aria-hidden />
           <p className="text-lg font-bold text-brown">아직 오지 않은 날이에요</p>
           <p className="text-sm text-brown/60">기록은 오늘까지 남길 수 있어요.</p>
@@ -246,10 +247,10 @@ function DiaryEditor({ childId, childName, date, entry }: DiaryEditorProps) {
           <DiaryView entry={entry} />
         </div>
         <aside className="space-y-3 lg:sticky lg:top-24">
-          <div className="rounded-3xl bg-white p-5 shadow-card ring-1 ring-hairline/70">
+          <div className="rounded-xl bg-white p-5 shadow-card ring-1 ring-hairline/70">
             <p className="flex items-center gap-2 text-sm font-semibold text-forest">
               <CloudCheck size={18} aria-hidden />
-              안전하게 저장된 기록
+              저장한 기록
             </p>
             <p className="mt-1.5 text-xs leading-relaxed text-brown/55">
               마지막 저장 {timeLabel(entry.updatedAt)}
@@ -258,7 +259,7 @@ function DiaryEditor({ childId, childName, date, entry }: DiaryEditorProps) {
             </p>
             <Button variant="primary" onClick={() => setIsEditing(true)} className="mt-4 w-full whitespace-nowrap">
               <Pencil size={16} aria-hidden />
-              고치고 꾸미기
+              기록 수정하기
             </Button>
             <Button
               variant="ghost"
@@ -269,9 +270,10 @@ function DiaryEditor({ childId, childName, date, entry }: DiaryEditorProps) {
               <Trash2 size={15} aria-hidden />이 기록 삭제
             </Button>
           </div>
+          <Link to="/storybooks/new" state={{ draft: { periodStart: date, periodEnd: date } }} className="service-panel flex items-center gap-3 p-5 text-sm font-semibold"><BookPlus size={20} className="text-sand-ink" /><span>이 하루로 동화 만들기<span className="mt-1 block text-xs font-normal text-brown/60">남긴 기록에 전하고 싶은 마음을 더해요</span></span></Link>
           <p className="flex items-center gap-1.5 px-2 text-xs text-brown/45">
             <Lock size={13} aria-hidden />
-            이 기록은 우리 가족 계정에서만 볼 수 있어요.
+            {USE_MOCK ? "체험 기록은 이 브라우저에 보관돼요." : "이 기록은 로그인한 계정에서 볼 수 있어요."}
           </p>
         </aside>
         <ConfirmDialog
@@ -292,7 +294,7 @@ function DiaryEditor({ childId, childName, date, entry }: DiaryEditorProps) {
   return (
     <>
       {restored && isEditing && !entry && (
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-ocean-light px-4 py-3 text-sm text-ocean-deep">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-ocean-light px-4 py-3 text-sm text-ocean-deep">
           <span>
             {timeLabel(restored.savedAt)}에 쓰던 내용을 이어서 불러왔어요.
           </span>
@@ -312,6 +314,10 @@ function DiaryEditor({ childId, childName, date, entry }: DiaryEditorProps) {
         </div>
       )}
 
+      <div className="sticky top-16 z-20 mb-5 flex items-center justify-between gap-3 border-y border-hairline bg-canvas px-1 py-3 lg:hidden">
+        <p className="text-xs text-brown/65">{draft.savedAt ? "이 기기에 임시 저장됨" : "작성 중인 기록"}<span className="mt-1 block text-brown/50">사진 {uploads.items.length}장 · {text.length}자</span></p>
+        <Button onClick={handleSave} loading={saveDiary.isPending} disabled={uploads.isUploading || uploads.hasFailed || isBusy}>기록 저장</Button>
+      </div>
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
         <div className="min-w-0" onPointerDown={() => setSelectedSticker(null)}>
           <DiaryPaper
@@ -320,7 +326,7 @@ function DiaryEditor({ childId, childName, date, entry }: DiaryEditorProps) {
               <>
                 <DiaryDateHeading date={date} />
                 <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-1" role="group" aria-label="오늘 날씨">
+                  <div className="flex items-center gap-1" role="group" aria-label="오늘 날씨 (선택)">
                     {WEATHER_OPTIONS.map((option) => {
                       const Icon = option.icon;
                       const active = weather === option.value;
@@ -342,7 +348,7 @@ function DiaryEditor({ childId, childName, date, entry }: DiaryEditorProps) {
                       );
                     })}
                   </div>
-                  <div className="scrollbar-none -mx-1 flex items-center gap-1 overflow-x-auto px-1" role="group" aria-label="오늘 기분">
+                  <div className="scrollbar-none -mx-1 flex items-center gap-1 overflow-x-auto px-1" role="group" aria-label="오늘 기분 (선택)">
                     {MOODS.map((mood) => {
                       const active = moodTag === mood.tag;
                       return (
@@ -375,17 +381,8 @@ function DiaryEditor({ childId, childName, date, entry }: DiaryEditorProps) {
               />
             }
           >
-            <EditablePhotos
-              items={uploads.items}
-              frame={decoration.frame}
-              onAdd={uploads.add}
-              onRemove={uploads.remove}
-              onRetry={uploads.retry}
-              disabled={isBusy}
-            />
-            <label htmlFor="diary-text" className="sr-only">
-              오늘 있었던 일
-            </label>
+
+            <label htmlFor="diary-text" className="mb-3 mt-6 block text-sm font-semibold text-brown/70">오늘 기억하고 싶은 순간</label>
             <textarea
               id="diary-text"
               ref={textarea}
@@ -397,25 +394,29 @@ function DiaryEditor({ childId, childName, date, entry }: DiaryEditorProps) {
               maxLength={1000}
               readOnly={isBusy}
               placeholder={`${childName}의 오늘은 어땠나요? 한 줄이어도 충분해요.\n예) 놀이터에서 친구에게 먼저 장난감을 빌려줬어요.`}
-              className="ruled-text block w-full resize-none overflow-hidden bg-transparent font-handwriting text-[21px] text-brown outline-none placeholder:text-brown/35"
+              aria-invalid={showValidationError}
+              aria-describedby={showValidationError ? "diary-content-error" : undefined}
+              className="ruled-text block min-h-[180px] w-full resize-none overflow-hidden bg-transparent font-handwriting text-[21px] text-brown outline-none placeholder:text-brown/50"
             />
+            {showValidationError && <p id="diary-content-error" role="alert" className="mt-2 text-sm text-error">사진이나 글을 하나 이상 남겨 주세요.</p>}
             <div className="mt-2 flex justify-end text-xs text-brown/40">{text.length}/1000</div>
+            <p className="mt-7 text-sm font-semibold text-brown/70">함께 남길 사진 <span className="font-normal text-brown/50">선택</span></p>
+            <EditablePhotos
+              items={uploads.items}
+              frame={decoration.frame}
+              onAdd={uploads.add}
+              onRemove={uploads.remove}
+              onRetry={uploads.retry}
+              disabled={isBusy}
+            />
           </DiaryPaper>
         </div>
 
         <aside className="space-y-4 lg:sticky lg:top-24">
-          <DecorPanel
-            decoration={decoration}
-            onAddSticker={addSticker}
-            onChange={(patch) => setDecoration((d) => ({ ...d, ...patch }))}
-          />
 
-          <div className="rounded-3xl bg-white p-4 shadow-card ring-1 ring-hairline/70">
-            {showValidationError && (
-              <p role="alert" className="mb-3 rounded-xl bg-error-light px-3 py-2 text-sm text-error">
-                사진이나 글을 하나 이상 남겨 주세요.
-              </p>
-            )}
+
+          <div className="service-panel p-5">
+            <div className="mb-4 border-b border-hairline pb-4"><p className="service-eyebrow">기록 보관</p><p className="mt-2 text-sm text-brown/70">사진 {uploads.items.length}장 · 글 {text.length}자</p><p className="mt-1 text-xs text-brown/60">{USE_MOCK ? "체험 버전 · 이 브라우저에 저장됩니다" : "저장하면 계정에서 다시 볼 수 있어요"}</p></div>
             {saveDiary.isError && (
               <p role="alert" className="mb-3 rounded-xl bg-error-light px-3 py-2 text-sm text-brown">
                 저장하지 못했어요. {errorMessage(saveDiary.error)} 쓰던 내용은 이 기기에 그대로 있어요.
@@ -426,7 +427,7 @@ function DiaryEditor({ childId, childName, date, entry }: DiaryEditorProps) {
               size="lg"
               onClick={handleSave}
               loading={saveDiary.isPending}
-              disabled={uploads.isUploading || uploads.hasFailed}
+              disabled={uploads.isUploading || uploads.hasFailed || isBusy}
               className="w-full"
             >
               {saveDiary.isPending ? "저장하는 중…" : entry ? "수정한 기록 저장하기" : "오늘의 기록 저장하기"}
@@ -438,9 +439,23 @@ function DiaryEditor({ childId, childName, date, entry }: DiaryEditorProps) {
             )}
             <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-brown/50">
               <ShieldCheck size={14} className="text-forest" aria-hidden />
-              {draft.savedAt ? `쓰는 내용은 자동으로 임시 저장돼요 · ${timeLabel(draft.savedAt)}` : "쓰는 내용은 자동으로 임시 저장돼요"}
+              {draft.savedAt ? `이 기기에 임시 저장됨 · ${timeLabel(draft.savedAt)}` : "글과 꾸미기는 이 기기에 임시 저장됩니다"}
             </p>
           </div>
+          <section className="service-panel p-5">
+            <h2 className="flex items-center gap-2 text-sm font-semibold"><MessageCircle size={17} className="text-sand-ink" />오늘의 작은 질문</h2>
+            <p className="mt-3 font-display text-lg">오늘 아이가 한 말 중<br />기억해 두고 싶은 말은요?</p>
+            <p className="mt-2 text-xs leading-relaxed text-brown/60">재미있었던 놀이, 처음 해낸 일, 함께 웃었던 순간도 좋아요.</p>
+            <button type="button" onClick={() => textarea.current?.focus()} className="mt-3 min-h-10 text-sm font-semibold text-ocean-deep">기록에 적어 보기 →</button>
+          </section>
+          <details className="group service-panel overflow-hidden">
+            <summary className="flex min-h-16 cursor-pointer items-center gap-2 px-5 text-sm font-semibold"><Palette size={17} className="text-sand-ink" />종이와 스티커 꾸미기<span className="ml-auto text-xs font-normal text-brown/50">선택 +</span></summary>
+          <DecorPanel
+            decoration={decoration}
+            onAddSticker={addSticker}
+            onChange={(patch) => setDecoration((d) => ({ ...d, ...patch }))}
+          />
+          </details>
         </aside>
       </div>
 

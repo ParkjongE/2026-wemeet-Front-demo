@@ -41,12 +41,12 @@ export default function DecorPanel({ decoration, onAddSticker, onChange }: Decor
   const [tab, setTab] = useState<Tab>("sticker");
 
   return (
-    <div className="rounded-3xl bg-white p-4 shadow-card ring-1 ring-hairline/70">
+    <div className="border-t border-hairline bg-white p-4">
       <div className="flex items-center justify-between">
         <p className="text-sm font-bold text-brown">꾸미기</p>
         <p className="text-xs text-brown/45">마음껏 꾸며도 언제든 바꿀 수 있어요</p>
       </div>
-      <div role="tablist" aria-label="꾸미기 도구" className="mt-3 grid grid-cols-3 gap-1 rounded-2xl bg-sand-light p-1">
+      <div role="tablist" aria-label="꾸미기 도구" className="mt-3 grid grid-cols-3 gap-1 rounded-lg bg-sand-light p-1">
         {TABS.map((t) => (
           <button
             key={t.value}
@@ -75,7 +75,7 @@ export default function DecorPanel({ decoration, onAddSticker, onChange }: Decor
                   onClick={() => onAddSticker(kind)}
                   aria-label={`${STICKERS[kind].label} 스티커 붙이기`}
                   title={STICKERS[kind].label}
-                  className="flex aspect-square items-center justify-center rounded-2xl p-1.5 transition-transform hover:scale-110 hover:bg-sand-light active:scale-95"
+                  className="flex aspect-square items-center justify-center rounded-lg p-1.5 transition-transform hover:scale-110 hover:bg-sand-light active:scale-95"
                 >
                   <Sticker kind={kind} className="h-full w-full" />
                 </button>
@@ -124,7 +124,7 @@ export default function DecorPanel({ decoration, onAddSticker, onChange }: Decor
                   aria-pressed={active}
                   onClick={() => onChange({ frame: frame.value })}
                   className={[
-                    "flex min-h-20 flex-col items-center justify-center gap-2 rounded-2xl border-2 transition-colors",
+                    "flex min-h-20 flex-col items-center justify-center gap-2 rounded-lg border-2 transition-colors",
                     active ? "border-sand bg-sand-light" : "border-transparent bg-canvas hover:bg-sand-light/60",
                   ].join(" ")}
                 >

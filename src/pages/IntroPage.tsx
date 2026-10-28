@@ -2,14 +2,11 @@ import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowRight,
-  BookHeart,
   Camera,
   CloudCheck,
-  HeartHandshake,
   Lock,
   PenLine,
   ShieldCheck,
-  Sparkles,
   Sticker as StickerIcon,
   Volume2,
 } from "lucide-react";
@@ -59,7 +56,7 @@ export default function IntroPage() {
   return (
     <div className="min-h-screen bg-canvas">
       {/* 상단 메뉴 */}
-      <header className="sticky top-0 z-30 border-b border-hairline/60 bg-canvas/85 backdrop-blur-md">
+      <header className="sticky top-0 z-30 border-b border-hairline/60 bg-canvas">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
           <Brand to="/intro" />
           <nav className="hidden items-center gap-1 md:flex" aria-label="소개 메뉴">
@@ -94,28 +91,23 @@ export default function IntroPage() {
 
       {/* 히어로 */}
       <section className="relative overflow-hidden">
-        <div className="mx-auto grid max-w-6xl items-center gap-6 px-4 pb-10 pt-10 sm:px-6 lg:grid-cols-[1fr_1.15fr] lg:pb-20 lg:pt-16">
-          <div className="text-center lg:text-left">
-            <p className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-sand-ink shadow-sm ring-1 ring-hairline">
-              <BookHeart size={14} aria-hidden />
-              육아 기록이 그림책이 되는 곳
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 pb-16 pt-12 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16 lg:pb-24 lg:pt-20">
+          <div className="text-left">
+            <p className="inline-flex items-center gap-2 text-sm font-medium text-sand-ink">
+              하루동화 · 추억을 모아, 동화로
             </p>
-            <h1 className="mt-5 font-book text-[34px] font-bold leading-[1.3] text-brown sm:text-5xl lg:text-[56px]">
-              우리 아이의 하루가,
-              <br />
-              한 권의 <span className="relative whitespace-nowrap">
-                그림동화
-                <span className="absolute inset-x-0 bottom-1 -z-10 h-3 rounded-full bg-sand-soft/80" aria-hidden />
-              </span>
-              로.
+            <h1 className="mt-5 font-display text-[36px] leading-[1.3] tracking-tight text-brown sm:text-[46px] lg:text-[54px]">
+              하루하루 기록이<br />
+              우리 아이만의<br />
+              그림동화로.
             </h1>
-            <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-brown/65 sm:text-lg lg:mx-0">
-              사진 한 장과 짧은 글로 오늘을 남겨 두세요. 쌓인 하루에 엄마 아빠의 마음을 더하면, 아이가 주인공인 그림책이 완성돼요.
+            <p className="mt-6 max-w-md text-base leading-relaxed text-brown/65 sm:text-lg lg:mx-0">
+              사진 한 장, 짧은 글에 담긴 소중한 추억. 우리 아이가 주인공인 그림동화책으로 만들어 함께 읽어 보세요.
             </p>
-            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-start">
               <Link
                 to={ctaTo}
-                className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-sand px-7 text-base font-semibold text-brown shadow-sm transition-colors hover:bg-sand-strong sm:w-auto"
+                className="flex min-h-14 w-full items-center justify-center gap-2 rounded-lg bg-sand px-7 text-base font-semibold text-brown shadow-sm transition-colors hover:bg-sand-strong sm:w-auto"
               >
                 {isSignedIn ? "내 기록 보러 가기" : "무료로 시작하기"}
                 <ArrowRight size={18} aria-hidden />
@@ -125,79 +117,65 @@ export default function IntroPage() {
                   type="button"
                   onClick={() => login.mutate(DEMO_ACCOUNT, { onSuccess: () => navigate("/") })}
                   disabled={login.isPending}
-                  className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-white px-7 text-base font-semibold text-brown ring-1 ring-hairline transition-colors hover:bg-sand-light disabled:opacity-60 sm:w-auto"
+                  className="flex min-h-14 w-full items-center justify-center gap-2 rounded-lg bg-white px-7 text-base font-semibold text-brown ring-1 ring-hairline transition-colors hover:bg-sand-light disabled:opacity-60 sm:w-auto"
                 >
                   {login.isPending ? "체험 계정 여는 중…" : "가입 없이 둘러보기"}
                 </button>
               ) : (
                 <a
                   href="#book"
-                  className="flex min-h-14 w-full items-center justify-center rounded-2xl bg-white px-7 text-base font-semibold text-brown ring-1 ring-hairline transition-colors hover:bg-sand-light sm:w-auto"
+                  className="flex min-h-14 w-full items-center justify-center rounded-lg bg-white px-7 text-base font-semibold text-brown ring-1 ring-hairline transition-colors hover:bg-sand-light sm:w-auto"
                 >
                   그림동화 미리 읽기
                 </a>
               )}
             </div>
-            <ul className="mt-8 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-brown/55 lg:justify-start">
-              <li className="flex items-center gap-1.5">
-                <Lock size={15} className="text-ocean-deep" aria-hidden />
-                가족만 보는 비공개 기록
-              </li>
-              <li className="flex items-center gap-1.5">
-                <ShieldCheck size={15} className="text-forest" aria-hidden />
-                아이 사진은 그림 생성에 쓰지 않아요
-              </li>
-            </ul>
           </div>
-          <div className="relative">
-            <div className="absolute inset-[8%] rounded-full bg-sand-light" aria-hidden />
-            <img
-              src={brandArt.hero}
-              alt="노란 가디건을 입은 여자아이와 줄무늬 티셔츠를 입은 남자아이가 바닥에 앉아 커다란 그림책을 함께 펼쳐 보며 웃고 있다"
-              className="relative w-full mix-blend-multiply soft-edges"
-            />
-          </div>
+          <figure className="relative mx-auto w-full max-w-[420px] px-6 sm:px-8 lg:ml-auto lg:mr-0">
+            <a href="#book" className="editorial-cover relative block overflow-hidden rounded-r-md border border-hairline bg-paper">
+              <img src={sampleBook.coverImageUrl} alt={`${sampleBook.title} 그림책 표지. 눌러서 미리 읽기`} className="aspect-[4/5] w-full object-cover" />
+              <div className="border-t border-hairline bg-canvas px-6 py-5">
+                <p className="text-[11px] tracking-widest text-sand-ink">하루동화 그림책 · 01</p>
+                <p className="mt-2 font-book text-2xl font-bold">{sampleBook.title}</p>
+              </div>
+            </a>
+            <figcaption className="mt-5 flex justify-between gap-3 text-xs text-brown/60">
+              <span>한 주의 기록으로 만든 그림책</span><a href="#book" className="underline underline-offset-4">펼쳐 보기 →</a>
+            </figcaption>
+          </figure>
         </div>
       </section>
 
       {/* 세 단계 */}
       <section className="border-y border-hairline/70 bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <p className="text-center text-sm font-semibold text-sand-ink">이렇게 만들어져요</p>
-          <h2 className="mt-2 text-center font-book text-3xl font-bold leading-snug text-brown sm:text-4xl">
-            기록하고, 마음을 담고, 함께 읽어요
+          <p className="text-sm font-semibold text-sand-ink">이렇게 만들어져요</p>
+          <h2 className="mt-2 font-book text-3xl font-bold leading-snug text-brown sm:text-4xl">
+            우리 아이의 하루에, 전하고 싶은 마음을 더해요
           </h2>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-brown/65">
+            아이에게 있었던 일과 <strong className="font-semibold text-brown">부모님이 전하고 싶은 교훈과 메시지</strong>를 자연스럽게 녹여,
+            <strong className="font-semibold text-brown">세상에 하나뿐인 우리 아이의 그림동화</strong>로 만들어요.
+          </p>
           <ol className="mt-12 grid gap-6 md:grid-cols-3">
             {[
               {
-                icon: Camera,
-                title: "오늘을 남겨요",
-                body: "사진 한 장, 한 줄이면 충분해요. 스티커와 예쁜 종이로 꾸미는 재미는 덤이에요.",
-                art: brandArt.emptyDiary,
+                title: "이야기가 될 하루를 남겨요",
+                body: "친구와 다툰 날, 처음 혼자 도전한 날. 사진과 짧은 글로 남긴 아이의 경험이 동화의 소재가 돼요.",
               },
               {
-                icon: HeartHandshake,
-                title: "전하고 싶은 마음을 적어요",
-                body: "‘친구와 나누면 더 즐거워’처럼 아이에게 건네고 싶은 한마디가 이야기의 중심이 돼요.",
-                art: brandArt.makingBook,
+                title: "전하고 싶은 교훈과 메시지를 골라요",
+                body: "용기, 나눔, 정직처럼 알려주고 싶은 가치를 고르고, ‘실수해도 괜찮아’처럼 아이에게 건네고 싶은 마음을 적어요.",
               },
               {
-                icon: BookHeart,
-                title: "그림책으로 함께 읽어요",
-                body: "아이가 주인공인 6장면 그림동화가 완성돼요. 책장을 넘기며 소리 내어 읽어 줄 수도 있어요.",
-                art: brandArt.momReading,
+                title: "마음이 녹아든 동화를 함께 읽어요",
+                body: "아이에게 있었던 일에 부모님이 전하고 싶은 마음이 자연스럽게 녹아들어요. 세상에 하나뿐인, 우리 아이가 주인공인 그림동화를 함께 읽어 보세요.",
               },
             ].map((step, i) => (
-              <li key={step.title} className="overflow-hidden rounded-[28px] bg-canvas ring-1 ring-hairline/60">
-                <div className="flex h-48 items-end justify-center bg-sand-light/70 px-4">
-                  <img src={step.art} alt="" loading="lazy" className="h-44 w-auto object-contain mix-blend-multiply soft-edges" />
-                </div>
-                <div className="p-6">
-                  <p className="flex items-center gap-2 text-sm font-semibold text-sand-ink">
-                    <step.icon size={17} aria-hidden />
-                    {String(i + 1).padStart(2, "0")}
-                  </p>
-                  <h3 className="mt-2 text-lg font-bold text-brown">{step.title}</h3>
+              <li key={step.title} className="border-t border-hairline pt-6">
+                <div className="py-2 pr-5">
+                  <p className="font-book text-3xl text-sand-ink">{String(i + 1).padStart(2, "0")}</p>
+                  <h3 className={`mt-2 text-lg font-bold ${i === 1 ? "text-sand-ink" : "text-brown"}`}>{step.title}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-brown/60">{step.body}</p>
                 </div>
               </li>
@@ -212,12 +190,12 @@ export default function IntroPage() {
           <div>
             <p className="text-sm font-semibold text-sand-ink">하루 기록</p>
             <h2 className="mt-2 font-book text-3xl font-bold leading-snug text-brown sm:text-4xl">
-              쓰는 날이 기다려지는
+              사진 한 장부터 시작하는
               <br />
               우리 아이 다이어리
             </h2>
             <p className="mt-4 text-base leading-relaxed text-brown/65">
-              사진을 고르면 바로 올라가고, 쓰던 글은 자동으로 임시 저장돼요. 바쁜 날엔 사진만, 여유로운 날엔 스티커까지 붙여 마음껏 꾸며 보세요.
+              사진 한 장에 스티커를 붙이고, 좋아하는 종이와 사진 틀을 골라 보세요. 아이와 함께 고르고 꾸미다 보면 평범한 하루도 꺼내 보고 싶은 추억이 돼요.
             </p>
             <ul className="mt-8 grid gap-4 sm:grid-cols-2">
               {[
@@ -241,25 +219,25 @@ export default function IntroPage() {
               })}
             </ul>
           </div>
-          <div className="mx-auto w-full max-w-lg rotate-[1.2deg]">
+          <div className="intro-diary-preview mx-auto w-full max-w-lg">
             <DiaryView entry={sampleEntry} />
           </div>
         </div>
       </section>
 
       {/* 그림동화 */}
-      <section id="book" className="scroll-mt-16 bg-[#f6efe3] py-16 sm:py-24">
+      <section id="book" className="scroll-mt-16 bg-paper py-16 sm:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="text-center">
+          <div className="text-left">
             <p className="text-sm font-semibold text-sand-ink">그림동화 미리 읽기</p>
             <h2 className="mt-2 font-book text-3xl font-bold leading-snug text-brown sm:text-4xl">
               친구에게 장난감을 빌려준 하루가
               <br className="hidden sm:block" /> 이런 그림책이 됐어요
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-brown/65">
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-brown/65">
               진짜 책처럼 오른쪽 장을 넘겨 보세요. 왼쪽엔 그림, 오른쪽엔 이야기가 있고, 마지막 장에는 부모님의 마음이 편지로 실려요.
             </p>
-            <div className="mt-6 inline-flex rounded-2xl bg-white p-1 shadow-sm ring-1 ring-hairline" role="radiogroup" aria-label="주인공 고르기">
+            <div className="mt-6 inline-flex rounded-lg bg-white p-1 shadow-sm ring-1 ring-hairline" role="radiogroup" aria-label="주인공 고르기">
               {(["girl", "boy"] as const).map((g) => (
                 <button
                   key={g}
@@ -288,56 +266,25 @@ export default function IntroPage() {
         </div>
       </section>
 
-      {/* 캐릭터 */}
-      <section className="py-16 sm:py-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="text-center">
-            <p className="text-sm font-semibold text-sand-ink">우리 아이 캐릭터</p>
-            <h2 className="mt-2 font-book text-3xl font-bold leading-snug text-brown sm:text-4xl">
-              아이 이름을 단 그림책 주인공
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-brown/65">
-              실제 사진 대신, 따뜻한 수채화로 그린 두 아이 중 한 명이 우리 아이의 이름으로 이야기 속을 뛰어다녀요.
-            </p>
-          </div>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2">
-            {(
-              [
-                ["girl", "여자아이 캐릭터", "단발머리에 노란 머리핀, 겨자색 가디건이 잘 어울리는 다정한 아이"],
-                ["boy", "남자아이 캐릭터", "삐죽 솟은 머리카락에 줄무늬 티셔츠, 웃음이 많은 개구쟁이"],
-              ] as const
-            ).map(([g, title, desc]) => (
-              <div key={g} className="flex items-end gap-4 overflow-hidden rounded-[28px] bg-white px-6 pt-6 shadow-card ring-1 ring-hairline/60">
-                <img src={characterArt[g].full} alt="" loading="lazy" className="-mb-2 h-56 w-auto shrink-0 mix-blend-multiply soft-edges sm:h-64" />
-                <div className="pb-8">
-                  <p className="text-lg font-bold text-brown">{title}</p>
-                  <p className="mt-2 text-[15px] leading-relaxed text-brown/60">{desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* 안심 */}
       <section id="safe" className="scroll-mt-16 border-y border-hairline/70 bg-white py-16 sm:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="text-center">
+          <div className="text-left">
             <p className="text-sm font-semibold text-forest">안심 보관</p>
             <h2 className="mt-2 font-book text-3xl font-bold leading-snug text-brown sm:text-4xl">
-              아이의 기록이니까, 더 조심스럽게
+              기록의 보관과 사진 사용 안내
             </h2>
           </div>
           <div className="mt-12 grid gap-5 md:grid-cols-3">
             {[
-              [Lock, "우리 가족만 봐요", "기록과 동화는 공개되지 않아요. 로그인한 계정에서만 열리고, 링크로 퍼지지 않아요.", "bg-ocean-light text-ocean-deep"],
-              [ShieldCheck, "사진은 그림 재료가 아니에요", "삽화는 그림책 캐릭터로 그려요. 아이 얼굴 사진을 그림 생성에 넣지 않아요.", "bg-forest-light text-forest"],
-              [CloudCheck, "쓰는 순간부터 지켜요", "사진은 고르는 즉시 올라가고, 글은 자동으로 임시 저장돼요. 언제든 고치고 지울 수 있어요.", "bg-sand-light text-sand-ink"],
+              [Lock, "기록과 동화의 공개 범위", "작성한 기록과 동화는 다른 이용자에게 공개되지 않으며, 로그인한 계정에서 확인할 수 있습니다.", "bg-ocean-light text-ocean-deep"],
+              [ShieldCheck, "아이 사진의 사용 범위", "업로드한 아이 사진은 일상 기록에 보관됩니다. 동화 삽화에는 선택한 그림책 캐릭터를 사용하며, 아이의 얼굴 사진을 그림 생성에 사용하지 않습니다.", "bg-forest-light text-forest"],
+              [CloudCheck, "작성 중인 기록도 자동 저장", "사진은 선택하면 업로드되고, 작성 중인 글은 자동으로 임시 저장됩니다. 저장된 기록은 언제든 수정하거나 삭제할 수 있습니다.", "bg-sand-light text-sand-ink"],
             ].map(([Icon, title, body, tone]) => {
               const I = Icon as typeof Lock;
               return (
-                <div key={title as string} className="rounded-[28px] bg-canvas p-7 ring-1 ring-hairline/60">
-                  <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${tone as string}`}>
+                <div key={title as string} className="border-t border-hairline py-7 pr-6">
+                  <span className={`flex h-12 w-12 items-center justify-center rounded-lg ${tone as string}`}>
                     <I size={22} aria-hidden />
                   </span>
                   <h3 className="mt-5 text-lg font-bold text-brown">{title as string}</h3>
@@ -352,8 +299,8 @@ export default function IntroPage() {
       {/* 자주 묻는 질문 */}
       <section id="faq" className="scroll-mt-16 py-16 sm:py-24">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
-          <h2 className="text-center font-book text-3xl font-bold text-brown sm:text-4xl">자주 묻는 질문</h2>
-          <div className="mt-10 divide-y divide-hairline rounded-[28px] bg-white px-5 shadow-card ring-1 ring-hairline/60 sm:px-8">
+          <h2 className="font-book text-3xl font-bold text-brown sm:text-4xl">자주 묻는 질문</h2>
+          <div className="mt-10 divide-y divide-hairline border-y border-hairline">
             {FAQS.map((faq) => (
               <details key={faq.q} className="group py-5">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-semibold text-brown marker:content-none sm:text-base">
@@ -371,7 +318,7 @@ export default function IntroPage() {
 
       {/* 마지막 권유 */}
       <section className="px-4 pb-16 sm:px-6 sm:pb-24">
-        <div className="mx-auto grid max-w-6xl items-center gap-6 overflow-hidden rounded-[32px] bg-sand-light px-6 pt-10 sm:px-12 lg:grid-cols-[1fr_1fr] lg:pt-0">
+        <div className="mx-auto grid max-w-6xl items-center gap-6 overflow-hidden rounded-xl bg-sand-light px-6 pt-10 sm:px-12 lg:grid-cols-[1fr_1fr] lg:pt-0">
           <div className="text-center lg:py-14 lg:text-left">
             <h2 className="font-book text-3xl font-bold leading-snug text-brown sm:text-4xl">
               오늘의 작은 순간이
@@ -381,9 +328,9 @@ export default function IntroPage() {
             <p className="mt-3 text-base text-brown/65">잊고 싶지 않은 우리 아이의 하루를 지금 남겨 보세요.</p>
             <Link
               to={ctaTo}
-              className="mt-7 inline-flex min-h-14 items-center gap-2 rounded-2xl bg-brown px-7 text-base font-semibold text-white transition-colors hover:bg-brown/90"
+              className="mt-7 inline-flex min-h-14 items-center gap-2 rounded-lg bg-brown px-7 text-base font-semibold text-white transition-colors hover:bg-brown/90"
             >
-              <Sparkles size={18} aria-hidden />
+              <ArrowRight size={18} aria-hidden />
               {isSignedIn ? "오늘 기록하러 가기" : "무료로 시작하기"}
             </Link>
           </div>
@@ -400,6 +347,7 @@ export default function IntroPage() {
           <div className="text-xs leading-relaxed sm:text-right">
             {USE_MOCK && <p className="font-semibold text-sand-ink">지금 보고 계신 화면은 체험 버전이에요.</p>}
             <p>© {new Date().getFullYear()} 하루동화</p>
+            <a href="/licenses/README.txt" target="_blank" rel="noreferrer" className="mt-2 inline-block underline underline-offset-4">폰트·아이콘 라이선스</a>
           </div>
         </div>
       </footer>

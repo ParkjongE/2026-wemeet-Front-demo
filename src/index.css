@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* NomadKit (.design/DESIGN.md) */
+  /* NomadKit palette — see .design/DESIGN.md. */
   --color-canvas: #fffdf7;
   --color-surface: #ffffff;
   --color-sand: #d4a373;
@@ -28,9 +28,10 @@
     "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --font-book: "Gowun Batang", "Nanum Myeongjo", "AppleMyungjo", serif;
   --font-story: var(--font-book);
-  --font-handwriting: "Gaegu", "Apple SD Gothic Neo", sans-serif;
+  --font-handwriting: "Gowun Dodum", sans-serif;
+  --font-display: var(--font-book);
 
-  --shadow-card: 0 1px 2px rgb(63 56 51 / 0.04), 0 4px 16px -4px rgb(63 56 51 / 0.08);
+  --shadow-card: 0 2px 6px rgb(48 56 47 / 0.04);
   --shadow-lift: 0 2px 4px rgb(63 56 51 / 0.05), 0 12px 32px -8px rgb(63 56 51 / 0.16);
 }
 
@@ -288,4 +289,49 @@ body {
     linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%),
     linear-gradient(to bottom, transparent 0, #000 7%, #000 93%, transparent 100%);
   mask-composite: intersect;
+}
+
+/* Shared reading rhythm and keyboard navigation. */
+html { scroll-padding-top: 88px; }
+button, a, input, textarea, select { touch-action: manipulation; }
+:focus-visible { outline: 2px solid var(--color-ocean-deep); outline-offset: 4px; }
+h1, h2, h3 { letter-spacing: -0.025em; }
+::selection { background: var(--color-sand-soft); }
+.editorial-cover { box-shadow: -4px 0 0 #deded2, 0 16px 36px -16px rgb(48 56 47 / 0.3); }
+
+/* Reading and interface type have distinct roles. */
+body { line-height: 1.65; }
+.font-book, .font-story { letter-spacing: -0.025em; }
+.font-handwriting { line-height: 2; }
+.font-handwriting.ruled-text { line-height: 36px; }
+
+/* Task surfaces: warm paper with clear, quiet controls. */
+.service-panel { border: 1px solid var(--color-hairline); border-radius: 20px; background: white; box-shadow: 0 4px 24px -16px rgb(63 56 51 / .12); }
+.service-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .04em; color: var(--color-sand-ink); }
+.font-display { font-weight: 700; letter-spacing: -.025em; }
+
+/* 기존 꽃잎 다이어리의 구성과 무늬를 유지하고 종이색만 변경. */
+.intro-diary-preview .paper-blossom {
+  background-color: #fff;
+}
+
+/* 홈: 최근 기록을 살짝 붙여 둔 작은 일기장. */
+.home-memory-note {
+  border: 1px solid #e8e3da;
+  border-radius: 3px;
+  box-shadow: 0 5px 14px -8px rgb(63 56 51 / 0.22);
+}
+.home-memory-note::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: calc(50% - 26px);
+  width: 52px;
+  height: 17px;
+  background: rgb(190 202 177 / 0.65);
+  transform: rotate(-5deg);
+}
+.home-empty-note {
+  white-space: pre-line;
+  background: repeating-linear-gradient(to bottom, transparent 0 35px, #f0eee8 35px 36px);
 }

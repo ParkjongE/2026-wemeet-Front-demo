@@ -20,7 +20,7 @@ export default function TextField({ label, hint, error, className = "", ...input
         aria-invalid={!!error}
         aria-describedby={describedBy}
         className={[
-          "min-h-13 w-full rounded-2xl border bg-white px-4 text-base text-brown outline-none transition-colors placeholder:text-brown/30 focus:ring-4",
+          "min-h-13 w-full rounded-lg border bg-white px-4 text-base text-brown outline-none transition-colors placeholder:text-brown/30 focus:ring-4",
           error
             ? "border-error focus:ring-error/15"
             : "border-hairline focus:border-ocean focus:ring-ocean/15",

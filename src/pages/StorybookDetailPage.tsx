@@ -29,11 +29,11 @@ function InProgressView({ book }: { book: Storybook }) {
     <div
       role="status"
       aria-live="polite"
-      className="mx-auto grid max-w-4xl items-center gap-8 overflow-hidden rounded-[28px] bg-white p-6 shadow-card ring-1 ring-hairline/60 sm:p-10 md:grid-cols-[1fr_1.1fr]"
+      className="mx-auto grid max-w-4xl items-center gap-8 overflow-hidden rounded-xl bg-white p-6 ring-1 ring-hairline sm:p-10 md:grid-cols-[1fr_1.1fr]"
     >
       <div className="relative">
         <div className="absolute inset-6 rounded-full bg-sand-light" aria-hidden />
-        <img src={brandArt.makingBook} alt="" className="animate-bob relative mx-auto w-full max-w-xs mix-blend-multiply soft-edges" />
+        <img src={brandArt.makingBook} alt="" className="relative mx-auto w-full max-w-xs mix-blend-multiply soft-edges" />
       </div>
       <div>
         <p className="text-sm font-semibold text-sand-ink">그림동화를 만들고 있어요</p>
@@ -66,7 +66,7 @@ function InProgressView({ book }: { book: Storybook }) {
             );
           })}
         </ol>
-        <p className="mt-6 rounded-2xl bg-canvas px-4 py-3 text-sm leading-relaxed text-brown/60">
+        <p className="mt-6 rounded-lg bg-canvas px-4 py-3 text-sm leading-relaxed text-brown/60">
           보통 몇 분 정도 걸려요. 이 화면을 닫아도 계속 만들어지고, 완성되면 서재에서 바로 볼 수 있어요.
         </p>
       </div>
@@ -79,7 +79,7 @@ function OriginEntries({ book }: { book: Storybook }) {
   const entries = diariesQuery.data ?? [];
   if (entries.length === 0) return null;
   return (
-    <section className="rounded-[28px] bg-white p-5 shadow-card ring-1 ring-hairline/60 sm:p-6">
+    <section className="rounded-xl bg-white p-5 ring-1 ring-hairline sm:p-6">
       <h2 className="text-base font-bold text-brown">이 이야기의 시작이 된 기록</h2>
       <p className="mt-0.5 text-sm text-brown/50">
         {formatPeriod(book.periodStart, book.periodEnd)} · 기록 {entries.length}개
@@ -89,7 +89,7 @@ function OriginEntries({ book }: { book: Storybook }) {
           <Link
             key={entry.date}
             to={`/diary/${entry.date}`}
-            className="w-44 shrink-0 rounded-2xl bg-canvas p-2.5 ring-1 ring-hairline/60 transition-colors hover:bg-sand-light"
+            className="w-44 shrink-0 rounded-lg bg-canvas p-2.5 ring-1 ring-hairline/60 transition-colors hover:bg-sand-light"
           >
             {entry.photos[0] ? (
               <img src={entry.photos[0].url} alt="" loading="lazy" className="mb-2 aspect-[4/3] w-full rounded-xl object-cover" />
@@ -166,13 +166,13 @@ export default function StorybookDetailPage() {
   } else if (storybookQuery.isError) {
     content =
       isApiError(storybookQuery.error) && storybookQuery.error.status === 404 ? (
-        <div className="mx-auto flex max-w-md flex-col items-center gap-3 rounded-[28px] bg-white p-10 text-center shadow-card">
+        <div className="mx-auto flex max-w-md flex-col items-center gap-3 rounded-xl bg-white p-10 text-center shadow-card">
           <img src={brandArt.emptyLibrary} alt="" className="h-40 w-auto mix-blend-multiply soft-edges" />
           <p className="text-lg font-bold text-brown">동화를 찾을 수 없어요</p>
           <p className="text-sm text-brown/60">삭제되었거나 주소가 잘못되었어요.</p>
           <Link
             to="/storybooks"
-            className="mt-2 flex min-h-12 items-center gap-1.5 rounded-2xl bg-sand px-5 text-sm font-semibold text-brown"
+            className="mt-2 flex min-h-12 items-center gap-1.5 rounded-lg bg-sand px-5 text-sm font-semibold text-brown"
           >
             <BookOpen size={16} aria-hidden />
             서재로 가기
@@ -201,7 +201,7 @@ export default function StorybookDetailPage() {
         {(b.status === "queued" || b.status === "processing") && <InProgressView book={b} />}
 
         {b.status === "failed" && (
-          <div className="mx-auto flex max-w-md flex-col items-center gap-3 rounded-[28px] bg-white p-8 text-center shadow-card ring-1 ring-hairline/60">
+          <div className="mx-auto flex max-w-md flex-col items-center gap-3 rounded-xl bg-white p-8 text-center ring-1 ring-hairline">
             <img src={brandArt.emptyDiary} alt="" className="h-40 w-auto mix-blend-multiply soft-edges" />
             <p className="text-lg font-bold text-brown">이번에는 책을 완성하지 못했어요</p>
             <p className="text-sm leading-relaxed text-brown/60">
@@ -232,7 +232,7 @@ export default function StorybookDetailPage() {
               }}
             />
             <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
-              <section className="rounded-[28px] bg-sand-light p-6">
+              <section className="rounded-xl bg-sand-light p-6">
                 <p className="text-xs font-semibold tracking-wider text-sand-ink">이 동화에 담은 마음</p>
                 <p className="mt-3 font-handwriting text-[22px] leading-snug text-brown">“{b.parentMessage}”</p>
                 {b.completedAt && (
